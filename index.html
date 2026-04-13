@@ -195,21 +195,22 @@
   <div class="subtitle">EMEA Product Specialists Edition</div>
 
   <div class="rules-toggle" onclick="document.querySelector('.rules-panel').classList.toggle('open')" role="button" tabindex="0">How to Play</div>
-  <div class="rules-panel" role="region" aria-label="Rules">
+  <div class="rules-panel" id="rules-content">
     <h3>The Goal</h3>
     <p>Be the first to complete a <strong>row, column, or diagonal</strong> (5 in a row).</p>
     <h3>How It Works</h3>
     <ul>
       <li>Enter your name to get your <strong>unique randomised card</strong>.</li>
       <li>When you spot something happening, <strong>tap the square</strong>.</li>
-      <li>Add an optional note (who said it, which session) — this is your evidence.</li>
+      <li>You'll be prompted to fill in <strong>who said it, which session, and roughly when</strong> — this is required for validation.</li>
       <li>The centre square is <strong>free</strong> and always checked.</li>
     </ul>
     <h3>Winning</h3>
     <ul>
-      <li>When you get BINGO, <strong>take a screenshot</strong> (the activity log is visible on the right).</li>
+      <li>When you get BINGO, <strong>take a screenshot</strong> of your card + activity log (scroll down on mobile).</li>
       <li>Post it in the <strong>team Slack channel</strong> with "BINGO!" 🎉</li>
-      <li>The group validates your squares — timestamps + notes are your evidence.</li>
+      <li>The group validates your squares — the activity log shows <strong>who, when, and which session</strong> for each claim.</li>
+      <li>If a square is rejected, play continues.</li>
     </ul>
     <h3>Bonus: Blackout</h3>
     <ul>
@@ -233,7 +234,10 @@
     <div class="game-header">
       <h1>Offsite Bingo</h1>
     </div>
-    <div class="player-bar">Playing as: <span class="player-label" id="player-display"></span></div>
+    <div class="player-bar">
+      Playing as: <span class="player-label" id="player-display"></span>
+      <span style="margin-left: 12px; font-size: 12px; color: #FF3621; cursor: pointer; font-weight: 600; border: 1.5px solid #FF3621; border-radius: 6px; padding: 3px 10px;" onclick="document.getElementById('rules-modal').classList.add('open')">How to Play</span>
+    </div>
 
     <div class="bingo-banner" id="bingo-banner">
       <div class="bingo-title" id="bingo-title">B I N G O !</div>
@@ -259,14 +263,26 @@
 </div>
 
 <!-- Note modal -->
-<div class="modal-overlay" id="modal" onclick="if(event.target===this)skipNote()">
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <h3>Spotted!</h3>
     <div class="modal-square" id="modal-square"></div>
-    <input type="text" id="modal-note" placeholder="Optional: who said it? which session?" autocomplete="off">
+    <div style="font-size: 11px; color: #999; margin-bottom: 8px; text-align: left;">For validation: who said it, which session, and roughly when?</div>
+    <input type="text" id="modal-note" placeholder='e.g. "Matt, strategy session, ~2:15pm"' autocomplete="off">
     <div class="modal-btns">
-      <button class="btn-skip" onclick="skipNote()">Just mark it</button>
-      <button class="btn-confirm" onclick="confirmNote()">Save note</button>
+      <button class="btn-skip" onclick="skipNote()">Skip (weaker claim)</button>
+      <button class="btn-confirm" onclick="confirmNote()">Save & mark</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rules modal (accessible from game view) -->
+<div class="modal-overlay" id="rules-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" style="width: 380px; text-align: left; max-height: 80vh; overflow-y: auto;">
+    <h3 style="text-align: center; margin-bottom: 12px;">How to Play</h3>
+    <div style="font-size: 13px; line-height: 1.6; color: #444;" id="rules-modal-content"></div>
+    <div style="text-align: center; margin-top: 16px;">
+      <button class="btn-confirm" onclick="document.getElementById('rules-modal').classList.remove('open')" style="padding: 10px 32px;">Got it</button>
     </div>
   </div>
 </div>
@@ -472,6 +488,9 @@ document.getElementById('modal-note').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') confirmNote();
   if (e.key === 'Escape') skipNote();
 });
+
+// Populate rules modal with same content as setup page rules
+document.getElementById('rules-modal-content').innerHTML = document.getElementById('rules-content').innerHTML;
 </script>
 </body>
 </html>

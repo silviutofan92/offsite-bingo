@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMEA PS Offsite Bingo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(135deg, #1B3139 0%, #2D4A54 50%, #1B3139 100%);
+    color: #1b1b1b;
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    padding: 28px 24px 24px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #FF3621, #E87722);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 12px;
+  }
+
+  /* Rules section */
+  .rules-toggle {
+    display: inline-block;
+    font-size: 13px;
+    color: #FF3621;
+    cursor: pointer;
+    font-weight: 600;
+    border: 1.5px solid #FF3621;
+    border-radius: 8px;
+    padding: 6px 14px;
+    transition: all 0.15s;
+    margin-bottom: 8px;
+  }
+
+  .rules-toggle:hover {
+    background: #FF3621;
+    color: white;
+  }
+
+  .rules-panel {
+    display: none;
+    text-align: left;
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 12px 0 20px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #444;
+  }
+
+  .rules-panel.open { display: block; }
+
+  .rules-panel h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1B3139;
+    margin: 12px 0 4px;
+  }
+
+  .rules-panel h3:first-child { margin-top: 0; }
+
+  .rules-panel ul {
+    margin-left: 18px;
+    margin-bottom: 4px;
+  }
+
+  .rules-panel li { margin-bottom: 2px; }
+
+  /* Player name */
+  .player-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .player-bar label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+  }
+
+  .player-bar input {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 6px 12px;
+    width: 180px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .player-bar input:focus {
+    border-color: #FF3621;
+  }
+
+  .shuffle-btn {
+    font-family: 'DM Sans', sans-serif;
+    background: #1B3139;
+    color: white;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .shuffle-btn:hover { background: #2D4A54; }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+    margin-bottom: 16px;
+  }
+
+  .cell {
+    border: 2.5px solid #ddd;
+    border-radius: 14px;
+    padding: 10px 7px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
+    background: #fafafa;
+  }
+
+  .cell .emoji {
+    font-size: 20px;
+    margin-bottom: 3px;
+    display: block;
+  }
+
+  .cell .text { display: block; }
+
+  .cell .ts {
+    display: none;
+    font-size: 9px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 3px;
+    font-weight: 400;
+  }
+
+  .cell.checked .ts { display: block; }
+
+  .cell:hover {
+    border-color: #FF3621;
+    background: #FFF5F4;
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(255, 54, 33, 0.15);
+  }
+
+  .cell:active { transform: scale(0.97); }
+
+  .cell.checked {
+    background: linear-gradient(135deg, #FF3621, #E84D2E);
+    color: white;
+    border-color: #FF3621;
+    box-shadow: 0 4px 16px rgba(255, 54, 33, 0.3);
+  }
+
+  .cell.checked::after {
+    content: '✓';
+    position: absolute;
+    top: 5px;
+    right: 7px;
+    font-size: 13px;
+    font-weight: 900;
+    opacity: 0.7;
+  }
+
+  .cell.free {
+    background: linear-gradient(135deg, #1B3139, #2D4A54);
+    color: white;
+    border-color: #1B3139;
+    font-weight: 700;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .cell.free:hover { transform: none; cursor: default; }
+  .cell.free .emoji { font-size: 24px; }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+  }
+
+  .footer .left { font-size: 11px; color: #bbb; }
+
+  .footer-btns { display: flex; gap: 8px; align-items: center; }
+
+  .reset-btn, .log-btn {
+    font-family: 'DM Sans', sans-serif;
+    background: #eee;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .reset-btn:hover, .log-btn:hover { background: #ddd; color: #333; }
+
+  .score {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FF3621;
+    min-width: 50px;
+    text-align: right;
+  }
+
+  /* Activity log */
+  .log-panel {
+    display: none;
+    margin-top: 16px;
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+  }
+
+  .log-panel.open { display: block; }
+
+  .log-panel h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1B3139;
+    margin-bottom: 8px;
+  }
+
+  .log-entries {
+    max-height: 240px;
+    overflow-y: auto;
+    font-size: 12px;
+    color: #555;
+  }
+
+  .log-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 12px;
+  }
+
+  .log-entry .log-time {
+    font-weight: 700;
+    color: #FF3621;
+    white-space: nowrap;
+    min-width: 55px;
+  }
+
+  .log-entry .log-text { flex: 1; }
+
+  .log-entry .log-note {
+    font-style: italic;
+    color: #999;
+    font-size: 11px;
+  }
+
+  .log-entry.log-remove {
+    opacity: 0.5;
+  }
+
+  .log-entry.log-remove .log-time {
+    color: #999;
+  }
+
+  .log-entry .log-action {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    padding: 1px 5px;
+    white-space: nowrap;
+  }
+
+  .log-action.marked {
+    background: #FFECE9;
+    color: #FF3621;
+  }
+
+  .log-action.unmarked {
+    background: #f0f0f0;
+    color: #999;
+  }
+
+  .log-empty {
+    color: #bbb;
+    font-style: italic;
+    font-size: 12px;
+  }
+
+  /* Note modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    width: 320px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+
+  .modal h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1B3139;
+    margin-bottom: 4px;
+  }
+
+  .modal .modal-square {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+  }
+
+  .modal input {
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.15s;
+  }
+
+  .modal input:focus { border-color: #FF3621; }
+
+  .modal-btns {
+    display: flex;
+    gap: 8px;
+  }
+
+  .modal-btns button {
+    font-family: 'DM Sans', sans-serif;
+    flex: 1;
+    padding: 9px;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-confirm {
+    background: #FF3621;
+    color: white;
+  }
+
+  .btn-confirm:hover { background: #e0301d; }
+
+  .btn-skip {
+    background: #eee;
+    color: #666;
+  }
+
+  .btn-skip:hover { background: #ddd; }
+
+  .btn-undo {
+    background: #eee;
+    color: #999;
+    font-size: 11px;
+    padding: 6px;
+  }
+
+  /* Bingo banner */
+  .bingo-banner {
+    display: none;
+    text-align: center;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #FF3621, #E87722);
+    color: white;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    animation: pulse 0.6s ease infinite alternate;
+  }
+
+  .bingo-banner.show { display: block; }
+
+  @keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.03); }
+  }
+
+  @media print {
+    body { padding: 0; background: white; }
+    .page { box-shadow: none; border-radius: 0; padding: 16px; }
+    .cell { min-height: 80px; font-size: 11px; }
+    .cell:hover { transform: none; box-shadow: none; }
+    .cell.checked { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .modal-overlay, .log-panel, .footer-btns { display: none !important; }
+  }
+
+  @media (max-width: 600px) {
+    .grid { gap: 4px; }
+    .cell { min-height: 78px; font-size: 10px; padding: 6px 4px; border-radius: 10px; }
+    .cell .emoji { font-size: 16px; }
+    h1 { font-size: 26px; }
+    .page { padding: 18px 12px; }
+    .player-bar { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page" role="main" aria-label="Bingo card">
+  <div class="header">
+    <h1>Offsite Bingo</h1>
+    <div class="subtitle">EMEA Product Specialists Edition</div>
+
+    <div class="rules-toggle" onclick="document.querySelector('.rules-panel').classList.toggle('open')" role="button" tabindex="0" aria-expanded="false">
+      How to Play
+    </div>
+
+    <div class="rules-panel" role="region" aria-label="Rules">
+      <h3>The Goal</h3>
+      <p>Be the first to complete a <strong>row, column, or diagonal</strong> (5 in a row).</p>
+
+      <h3>How It Works</h3>
+      <ul>
+        <li>When you spot something on the card happening in real life, <strong>tap the square</strong>.</li>
+        <li>You'll be asked for an optional note (who said it, what session, etc.) — this is for validation later.</li>
+        <li>The centre square is <strong>free</strong> — because someone will definitely say "So..."</li>
+        <li>Your card layout is <strong>randomised</strong> — everyone has the same squares in a different order, so it's a fair race.</li>
+      </ul>
+
+      <h3>Validation</h3>
+      <ul>
+        <li>When someone shouts "BINGO!", the group validates their 5 squares.</li>
+        <li>Each square has a <strong>timestamp</strong> and optional note in the activity log.</li>
+        <li>The group votes: does each claim count? Majority rules.</li>
+        <li>If a square is rejected, play continues.</li>
+      </ul>
+
+      <h3>Bonus Rules (optional)</h3>
+      <ul>
+        <li><strong>Blackout</strong>: After someone wins a line, keep playing until someone fills the whole card.</li>
+        <li><strong>No self-triggering</strong>: You can't say something yourself to fill your own square.</li>
+        <li><strong>Double points</strong>: If the same person triggers 3+ of your squares, that's a bonus.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="player-bar">
+    <label for="player-name">Your name:</label>
+    <input type="text" id="player-name" placeholder="Enter your name" autocomplete="off">
+    <button class="shuffle-btn" onclick="shuffleGrid()" title="Randomise your grid layout">Shuffle</button>
+  </div>
+
+  <div class="bingo-banner" id="bingo-banner">B I N G O !</div>
+
+  <div class="grid" id="grid" role="grid" aria-label="5 by 5 bingo grid">
+    <!-- Populated by JS -->
+  </div>
+
+  <div class="footer">
+    <span class="left">EMEA Product Specialists Offsite</span>
+    <div class="footer-btns">
+      <button class="log-btn" onclick="document.querySelector('.log-panel').classList.toggle('open')">Activity Log</button>
+      <button class="reset-btn" onclick="resetAll()">Reset</button>
+    </div>
+    <span class="score" aria-live="polite"><span id="count">0</span>/25</span>
+  </div>
+
+  <div class="log-panel" id="log-panel" role="region" aria-label="Activity log">
+    <h3>Activity Log</h3>
+    <div class="log-entries" id="log-entries">
+      <div class="log-empty">No squares marked yet.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Note modal -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)skipNote()">
+  <div class="modal">
+    <h3>Spotted!</h3>
+    <div class="modal-square" id="modal-square"></div>
+    <input type="text" id="modal-note" placeholder="Optional: who said it? which session?" autocomplete="off">
+    <div class="modal-btns">
+      <button class="btn-skip" onclick="skipNote()">Just mark it</button>
+      <button class="btn-confirm" onclick="confirmNote()">Save note</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SQUARES = [
+  { emoji: '👏', text: '"That\'s a great shout"' },
+  { emoji: '🙈', text: '"Sorry, just one last thing" — then talks for 5 more minutes' },
+  { emoji: '🎭', text: 'Roleplays a customer conversation mid-sentence' },
+  { emoji: '🧐', text: 'Uses an unnecessarily fancy word' },
+  { emoji: '💥', text: 'Predicts absolute doom for a product decision' },
+  { emoji: '✅', text: 'Violently agrees before you\'ve finished talking' },
+  { emoji: '📱', text: 'Someone checks their phone mid-session' },
+  { emoji: '🤿', text: 'Sudden deep tech dive in a non-technical chat' },
+  { emoji: '💬', text: 'Proposes a new Slack channel or working group' },
+  { emoji: '⬆️', text: 'Someone namedrops a VP+' },
+  { emoji: '🔬', text: 'Says "basically" before every explanation' },
+  { emoji: '🧠', text: '"It\'s not documented yet"' },
+  // index 12 = FREE SPACE (handled separately)
+  { emoji: '📩', text: '"Feel free to reach out"' },
+  { emoji: '🏔️', text: '"Above my pay grade"' },
+  { emoji: '🦉', text: 'Breaks a long silence with one piece of wisdom' },
+  { emoji: '🤝', text: 'References a customer by first name like they\'re mates' },
+  { emoji: '🗣️', text: 'Answers their own question out loud' },
+  { emoji: '📦', text: '"A whole bunch of stuff"' },
+  { emoji: '🎓', text: 'Says "I don\'t know" then states an absolute fact' },
+  { emoji: '🔊', text: 'Side conversation gets louder than the main one' },
+  { emoji: '📢', text: 'Plugs their own product area completely unprompted' },
+  { emoji: '🏷️', text: 'Mentions a competitor by name' },
+  { emoji: '😎', text: '"Living the dream"' },
+  { emoji: '🤦', text: '"Let\'s take this offline" (while already in person)' },
+];
+
+const FREE = { emoji: '⭐', text: 'FREE SPACE\nSomeone says "So..."', free: true };
+
+let state = {
+  order: [],        // indices into SQUARES
+  checked: {},      // index -> { time, note }
+  log: [],          // { time, text, note }
+};
+
+let pendingCell = null;
+
+function seededRandom(seed) {
+  // Simple seeded PRNG (mulberry32)
+  return function() {
+    let t = seed += 0x6D2B79F5;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function hashString(s) {
+  let hash = 0;
+  for (let i = 0; i < s.length; i++) {
+    hash = ((hash << 5) - hash) + s.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function shuffleArray(arr, rng) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function shuffleGrid() {
+  const name = document.getElementById('player-name').value.trim() || 'default';
+  const seed = hashString(name + '-bingo-2026');
+  const rng = seededRandom(seed);
+  state.order = shuffleArray([...Array(SQUARES.length).keys()], rng);
+  state.checked = {};
+  state.log = [];
+  renderGrid();
+  renderLog();
+  updateScore();
+  document.getElementById('bingo-banner').classList.remove('show');
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  // Insert 24 shuffled squares + 1 free space at position 12
+  let sqIdx = 0;
+  for (let i = 0; i < 25; i++) {
+    const cell = document.createElement('div');
+    cell.setAttribute('role', 'gridcell');
+    cell.setAttribute('tabindex', '0');
+
+    if (i === 12) {
+      // Free space
+      cell.className = 'cell free';
+      cell.innerHTML = `<span class="emoji" aria-hidden="true">${FREE.emoji}</span><span class="text">FREE SPACE<br>Someone says "So..."</span>`;
+      cell.setAttribute('aria-label', 'Free space');
+      cell.dataset.idx = 'free';
+    } else {
+      const dataIdx = state.order[sqIdx];
+      const sq = SQUARES[dataIdx];
+      cell.className = 'cell' + (state.checked[dataIdx] ? ' checked' : '');
+      cell.dataset.idx = dataIdx;
+
+      const tsHtml = state.checked[dataIdx]
+        ? `<span class="ts">${state.checked[dataIdx].time}</span>`
+        : '<span class="ts"></span>';
+
+      cell.innerHTML = `<span class="emoji" aria-hidden="true">${sq.emoji}</span><span class="text">${sq.text}</span>${tsHtml}`;
+      cell.setAttribute('aria-label', sq.text);
+      cell.setAttribute('aria-checked', !!state.checked[dataIdx]);
+
+      cell.onclick = () => handleCellClick(cell, dataIdx);
+      cell.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') handleCellClick(cell, dataIdx); };
+      sqIdx++;
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function handleCellClick(cell, idx) {
+  if (state.checked[idx]) {
+    // Uncheck — log the removal but keep history
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    state.log.push({
+      idx,
+      time: timeStr,
+      text: SQUARES[idx].text,
+      emoji: SQUARES[idx].emoji,
+      note: '',
+      action: 'unmarked',
+    });
+    delete state.checked[idx];
+    renderGrid();
+    renderLog();
+    updateScore();
+    document.getElementById('bingo-banner').classList.remove('show');
+    return;
+  }
+
+  // Show modal for note
+  pendingCell = { cell, idx };
+  const sq = SQUARES[idx];
+  document.getElementById('modal-square').textContent = sq.emoji + ' ' + sq.text;
+  document.getElementById('modal-note').value = '';
+  document.getElementById('modal').classList.add('open');
+  setTimeout(() => document.getElementById('modal-note').focus(), 100);
+}
+
+function confirmNote() {
+  if (!pendingCell) return;
+  const note = document.getElementById('modal-note').value.trim();
+  markSquare(pendingCell.idx, note);
+  closeModal();
+}
+
+function skipNote() {
+  if (!pendingCell) return;
+  markSquare(pendingCell.idx, '');
+  closeModal();
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  pendingCell = null;
+}
+
+function markSquare(idx, note) {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  state.checked[idx] = { time: timeStr, note };
+  state.log.push({
+    idx,
+    time: timeStr,
+    text: SQUARES[idx].text,
+    emoji: SQUARES[idx].emoji,
+    note,
+    action: 'marked',
+  });
+
+  renderGrid();
+  renderLog();
+  updateScore();
+  checkBingo();
+}
+
+function updateScore() {
+  const checked = Object.keys(state.checked).length + 1; // +1 for free
+  document.getElementById('count').textContent = checked;
+}
+
+function renderLog() {
+  const el = document.getElementById('log-entries');
+  if (state.log.length === 0) {
+    el.innerHTML = '<div class="log-empty">No squares marked yet.</div>';
+    return;
+  }
+  el.innerHTML = [...state.log].reverse().map(l => `
+    <div class="log-entry ${l.action === 'unmarked' ? 'log-remove' : ''}">
+      <span class="log-time">${l.time}</span>
+      <span class="log-action ${l.action}">${l.action === 'unmarked' ? '✕ unmarked' : '✓ marked'}</span>
+      <span class="log-text">${l.emoji} ${l.text}</span>
+      ${l.note ? `<span class="log-note">${l.note}</span>` : ''}
+    </div>
+  `).join('');
+}
+
+function checkBingo() {
+  // Build 5x5 boolean grid
+  const grid = [];
+  let sqIdx = 0;
+  for (let i = 0; i < 25; i++) {
+    if (i === 12) {
+      grid.push(true); // free space
+    } else {
+      grid.push(!!state.checked[state.order[sqIdx]]);
+      sqIdx++;
+    }
+  }
+
+  // Check rows
+  for (let r = 0; r < 5; r++) {
+    if (grid.slice(r*5, r*5+5).every(Boolean)) { showBingo(); return; }
+  }
+  // Check cols
+  for (let c = 0; c < 5; c++) {
+    if ([0,1,2,3,4].every(r => grid[r*5+c])) { showBingo(); return; }
+  }
+  // Diagonals
+  if ([0,6,12,18,24].every(i => grid[i])) { showBingo(); return; }
+  if ([4,8,12,16,20].every(i => grid[i])) { showBingo(); return; }
+}
+
+function showBingo() {
+  document.getElementById('bingo-banner').classList.add('show');
+}
+
+function resetAll() {
+  if (!confirm('Reset your card? This clears all marks and notes.')) return;
+  state.checked = {};
+  state.log = [];
+  renderGrid();
+  renderLog();
+  updateScore();
+  document.getElementById('bingo-banner').classList.remove('show');
+}
+
+// Handle Enter in modal
+document.getElementById('modal-note').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') confirmNote();
+  if (e.key === 'Escape') skipNote();
+});
+
+// Handle Enter in player name → shuffle
+document.getElementById('player-name').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') shuffleGrid();
+});
+
+// Init with random layout
+shuffleGrid();
+</script>
+
+</body>
+</html>

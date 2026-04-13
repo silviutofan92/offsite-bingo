@@ -6,7 +6,6 @@
 <title>EMEA PS Offsite Bingo</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&display=swap');
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
@@ -14,43 +13,50 @@
     background: linear-gradient(135deg, #1B3139 0%, #2D4A54 50%, #1B3139 100%);
     color: #1b1b1b;
     min-height: 100vh;
-    padding: 24px 16px;
+    padding: 20px 12px;
   }
 
-  .page {
-    max-width: 720px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 20px;
-    padding: 28px 24px 24px;
-    box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+  /* --- SETUP GATE --- */
+  .setup-page {
+    max-width: 480px; margin: 60px auto; background: white; border-radius: 20px;
+    padding: 40px 28px; box-shadow: 0 12px 48px rgba(0,0,0,0.3); text-align: center;
   }
-
-  .header { text-align: center; margin-bottom: 20px; }
-
-  h1 {
-    font-size: 32px;
-    font-weight: 900;
-    letter-spacing: -1px;
+  .setup-page h1 {
+    font-size: 32px; font-weight: 900; letter-spacing: -1px;
     background: linear-gradient(135deg, #FF3621, #E87722);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     margin-bottom: 4px;
   }
-
-  .subtitle { font-size: 14px; color: #555; margin-bottom: 12px; }
+  .setup-page .subtitle { font-size: 14px; color: #555; margin-bottom: 24px; }
+  .setup-page .gate-emoji { font-size: 56px; margin-bottom: 16px; }
+  .setup-page h2 { font-size: 20px; font-weight: 700; color: #1B3139; margin-bottom: 8px; }
+  .setup-page p { font-size: 14px; color: #666; margin-bottom: 20px; line-height: 1.5; }
+  .setup-page input {
+    font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 700;
+    border: 3px solid #ddd; border-radius: 12px; padding: 12px 16px;
+    width: 280px; text-align: center; outline: none; transition: border-color 0.15s;
+    display: block; margin: 0 auto 16px;
+  }
+  .setup-page input:focus { border-color: #FF3621; }
+  .start-btn {
+    font-family: 'DM Sans', sans-serif; background: linear-gradient(135deg, #FF3621, #E87722);
+    color: white; border: none; padding: 14px 40px; border-radius: 12px;
+    font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    box-shadow: 0 4px 16px rgba(255,54,33,0.3);
+  }
+  .start-btn:hover { transform: scale(1.05); }
+  .start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .gate-hint { font-size: 12px; color: #bbb; margin-top: 12px; font-style: italic; }
 
   .rules-toggle {
     display: inline-block; font-size: 13px; color: #FF3621; cursor: pointer;
     font-weight: 600; border: 1.5px solid #FF3621; border-radius: 8px;
-    padding: 6px 14px; transition: all 0.15s; margin-bottom: 8px;
+    padding: 6px 14px; transition: all 0.15s; margin-bottom: 16px;
   }
   .rules-toggle:hover { background: #FF3621; color: white; }
-
   .rules-panel {
     display: none; text-align: left; background: #f9f9f9; border-radius: 12px;
-    padding: 16px 20px; margin: 12px 0 20px; font-size: 13px; line-height: 1.6; color: #444;
+    padding: 16px 20px; margin: 0 0 20px; font-size: 13px; line-height: 1.6; color: #444;
   }
   .rules-panel.open { display: block; }
   .rules-panel h3 { font-size: 14px; font-weight: 700; color: #1B3139; margin: 12px 0 4px; }
@@ -58,110 +64,98 @@
   .rules-panel ul { margin-left: 18px; margin-bottom: 4px; }
   .rules-panel li { margin-bottom: 2px; }
 
-  /* Setup gate */
-  .setup-gate {
-    text-align: center;
-    padding: 40px 20px;
-    margin-bottom: 16px;
+  /* --- GAME LAYOUT: grid + log side by side --- */
+  .game-wrapper { display: none; max-width: 960px; margin: 0 auto; }
+  .game-wrapper.active { display: flex; gap: 16px; align-items: flex-start; }
+
+  .game-main {
+    flex: 1; min-width: 0; background: white; border-radius: 20px;
+    padding: 24px 20px 20px; box-shadow: 0 12px 48px rgba(0,0,0,0.3);
   }
 
-  .setup-gate .gate-emoji { font-size: 48px; margin-bottom: 12px; }
-
-  .setup-gate h2 {
-    font-size: 20px; font-weight: 700; color: #1B3139; margin-bottom: 8px;
+  .game-sidebar {
+    width: 280px; flex-shrink: 0; background: white; border-radius: 20px;
+    padding: 20px 16px; box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+    max-height: calc(100vh - 40px); overflow-y: auto; position: sticky; top: 20px;
   }
 
-  .setup-gate p { font-size: 14px; color: #666; margin-bottom: 20px; line-height: 1.5; }
-
-  .setup-gate input {
-    font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 700;
-    border: 3px solid #ddd; border-radius: 12px; padding: 12px 16px;
-    width: 260px; text-align: center; outline: none; transition: border-color 0.15s;
-    display: block; margin: 0 auto 16px;
+  .game-header {
+    text-align: center; margin-bottom: 12px;
   }
-  .setup-gate input:focus { border-color: #FF3621; }
-
-  .setup-gate .start-btn {
-    font-family: 'DM Sans', sans-serif; background: linear-gradient(135deg, #FF3621, #E87722);
-    color: white; border: none; padding: 14px 40px; border-radius: 12px;
-    font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.15s;
-    box-shadow: 0 4px 16px rgba(255, 54, 33, 0.3);
+  .game-header h1 {
+    font-size: 26px; font-weight: 900; letter-spacing: -1px;
+    background: linear-gradient(135deg, #FF3621, #E87722);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 2px;
   }
-  .setup-gate .start-btn:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(255, 54, 33, 0.4); }
-  .setup-gate .start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-
-  .setup-gate .gate-hint {
-    font-size: 12px; color: #bbb; margin-top: 12px; font-style: italic;
-  }
-
-  /* Game area — hidden until started */
-  .game-area { display: none; }
-  .game-area.active { display: block; }
-
-  /* Player bar (shown during game) */
-  .player-bar {
-    display: flex; align-items: center; justify-content: center;
-    gap: 8px; margin-bottom: 16px; font-size: 14px; color: #555;
-  }
+  .player-bar { text-align: center; font-size: 13px; color: #555; margin-bottom: 12px; }
   .player-bar .player-label { font-weight: 700; color: #1B3139; }
 
-  /* Grid */
-  .grid {
-    display: grid; grid-template-columns: repeat(5, 1fr);
-    gap: 7px; margin-bottom: 16px;
+  /* Bingo banner */
+  .bingo-banner {
+    display: none; text-align: center; padding: 16px; margin-bottom: 12px;
+    border-radius: 12px; background: linear-gradient(135deg, #FF3621, #E87722);
+    color: white; font-weight: 900; animation: pulse 0.6s ease infinite alternate;
   }
+  .bingo-banner.show { display: block; }
+  .bingo-banner .bingo-title { font-size: 24px; letter-spacing: 4px; margin-bottom: 6px; }
+  .bingo-banner .bingo-sub { font-size: 12px; font-weight: 500; opacity: 0.9; }
+  .bingo-banner.blackout { background: linear-gradient(135deg, #FFD700, #FFA500); color: #1B3139; }
+  @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.02); } }
 
+  /* Grid */
+  .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 12px; }
   .cell {
-    border: 2.5px solid #ddd; border-radius: 14px; padding: 10px 7px;
-    text-align: center; font-size: 12px; font-weight: 500; line-height: 1.35;
+    border: 2.5px solid #ddd; border-radius: 12px; padding: 8px 6px;
+    text-align: center; font-size: 11.5px; font-weight: 500; line-height: 1.3;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    min-height: 100px; cursor: pointer; transition: all 0.15s ease;
+    min-height: 90px; cursor: pointer; transition: all 0.15s ease;
     user-select: none; -webkit-user-select: none; position: relative; background: #fafafa;
   }
-  .cell .emoji { font-size: 20px; margin-bottom: 3px; display: block; }
+  .cell .emoji { font-size: 18px; margin-bottom: 2px; display: block; }
   .cell .text { display: block; }
-  .cell .ts { display: none; font-size: 9px; color: rgba(255,255,255,0.7); margin-top: 3px; font-weight: 400; }
+  .cell .ts { display: none; font-size: 8px; color: rgba(255,255,255,0.7); margin-top: 2px; }
   .cell.checked .ts { display: block; }
   .cell:hover { border-color: #FF3621; background: #FFF5F4; transform: scale(1.03); box-shadow: 0 4px 12px rgba(255,54,33,0.15); }
   .cell:active { transform: scale(0.97); }
   .cell.checked { background: linear-gradient(135deg, #FF3621, #E84D2E); color: white; border-color: #FF3621; box-shadow: 0 4px 16px rgba(255,54,33,0.3); }
-  .cell.checked::after { content: '✓'; position: absolute; top: 5px; right: 7px; font-size: 13px; font-weight: 900; opacity: 0.7; }
-  .cell.free { background: linear-gradient(135deg, #1B3139, #2D4A54); color: white; border-color: #1B3139; font-weight: 700; box-shadow: inset 0 2px 8px rgba(0,0,0,0.2); }
-  .cell.free:hover { transform: none; cursor: default; }
-  .cell.free .emoji { font-size: 24px; }
+  .cell.checked::after { content: '✓'; position: absolute; top: 4px; right: 6px; font-size: 12px; font-weight: 900; opacity: 0.7; }
+  .cell.free { background: linear-gradient(135deg, #1B3139, #2D4A54); color: white; border-color: #1B3139; font-weight: 700; box-shadow: inset 0 2px 8px rgba(0,0,0,0.2); cursor: default; }
+  .cell.free:hover { transform: none; }
+  .cell.free .emoji { font-size: 22px; }
+  .cell.free.checked { background: linear-gradient(135deg, #1B3139, #2D4A54); }
+  .cell.free.checked::after { display: none; }
 
   /* Footer */
-  .footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #eee; }
-  .footer .left { font-size: 11px; color: #bbb; }
-  .footer-btns { display: flex; gap: 8px; align-items: center; }
-  .reset-btn, .log-btn {
+  .game-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #eee; }
+  .game-footer .left { font-size: 11px; color: #bbb; }
+  .reset-btn {
     font-family: 'DM Sans', sans-serif; background: #eee; border: none;
-    padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600;
     color: #666; cursor: pointer; transition: all 0.15s;
   }
-  .reset-btn:hover, .log-btn:hover { background: #ddd; color: #333; }
-  .score { font-size: 13px; font-weight: 700; color: #FF3621; min-width: 50px; text-align: right; }
+  .reset-btn:hover { background: #ddd; color: #333; }
+  .score { font-size: 13px; font-weight: 700; color: #FF3621; }
 
-  /* Activity log */
-  .log-panel { display: none; margin-top: 16px; border-top: 1px solid #eee; padding-top: 12px; }
-  .log-panel.open { display: block; }
-  .log-panel h3 { font-size: 13px; font-weight: 700; color: #1B3139; margin-bottom: 8px; }
-  .log-entries { max-height: 240px; overflow-y: auto; font-size: 12px; color: #555; }
-  .log-entry { display: flex; justify-content: space-between; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid #f0f0f0; gap: 12px; }
-  .log-entry .log-time { font-weight: 700; color: #FF3621; white-space: nowrap; min-width: 65px; }
-  .log-entry .log-text { flex: 1; }
-  .log-entry .log-note { font-style: italic; color: #999; font-size: 11px; }
-  .log-entry.log-remove { opacity: 0.5; }
-  .log-entry.log-remove .log-time { color: #999; }
-  .log-entry .log-action { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
+  /* --- SIDEBAR: Activity log --- */
+  .sidebar-title { font-size: 14px; font-weight: 700; color: #1B3139; margin-bottom: 4px; }
+  .sidebar-sub { font-size: 11px; color: #999; margin-bottom: 12px; }
+  .log-entries { font-size: 11.5px; color: #555; }
+  .log-entry { padding: 6px 0; border-bottom: 1px solid #f0f0f0; }
+  .log-entry .log-time { font-weight: 700; color: #FF3621; font-size: 11px; }
+  .log-entry .log-action { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 3px; padding: 1px 4px; margin-left: 4px; }
   .log-action.marked { background: #FFECE9; color: #FF3621; }
   .log-action.unmarked { background: #f0f0f0; color: #999; }
-  .log-empty { color: #bbb; font-style: italic; font-size: 12px; }
+  .log-entry .log-text { display: block; margin-top: 2px; }
+  .log-entry .log-note { display: block; font-style: italic; color: #999; font-size: 10px; margin-top: 1px; }
+  .log-entry.log-remove { opacity: 0.45; }
+  .log-entry.log-remove .log-time { color: #999; }
+  .log-empty { color: #ccc; font-style: italic; font-size: 12px; }
 
-  /* Note modal */
+  /* Modal */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
-  .modal { background: white; border-radius: 16px; padding: 24px; width: 340px; box-shadow: 0 12px 48px rgba(0,0,0,0.3); text-align: center; }
+  .modal { background: white; border-radius: 16px; padding: 24px; width: 320px; box-shadow: 0 12px 48px rgba(0,0,0,0.3); text-align: center; }
   .modal h3 { font-size: 15px; font-weight: 700; color: #1B3139; margin-bottom: 4px; }
   .modal .modal-square { font-size: 13px; color: #666; margin-bottom: 12px; }
   .modal input { font-family: 'DM Sans', sans-serif; width: 100%; border: 2px solid #ddd; border-radius: 8px; padding: 8px 12px; font-size: 13px; outline: none; margin-bottom: 12px; transition: border-color 0.15s; }
@@ -173,121 +167,93 @@
   .btn-skip { background: #eee; color: #666; }
   .btn-skip:hover { background: #ddd; }
 
-  /* Bingo banner */
-  .bingo-banner {
-    display: none; text-align: center; padding: 20px; margin-bottom: 16px;
-    border-radius: 12px; background: linear-gradient(135deg, #FF3621, #E87722);
-    color: white; font-weight: 900; animation: pulse 0.6s ease infinite alternate;
+  /* Responsive: stack on mobile */
+  @media (max-width: 740px) {
+    .game-wrapper.active { flex-direction: column; }
+    .game-sidebar { width: 100%; position: static; max-height: 300px; }
+    .cell { min-height: 72px; font-size: 10px; padding: 5px 3px; border-radius: 10px; }
+    .cell .emoji { font-size: 15px; }
+    .game-main { padding: 16px 12px; }
   }
-  .bingo-banner.show { display: block; }
-  .bingo-banner .bingo-title { font-size: 28px; letter-spacing: 4px; margin-bottom: 8px; }
-  .bingo-banner .bingo-sub { font-size: 13px; font-weight: 500; opacity: 0.9; margin-bottom: 12px; }
-  .bingo-banner .bingo-email-btn {
-    font-family: 'DM Sans', sans-serif; background: white; color: #FF3621;
-    border: none; padding: 10px 24px; border-radius: 8px; font-size: 14px;
-    font-weight: 700; cursor: pointer; transition: all 0.15s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  }
-  .bingo-banner .bingo-email-btn:hover { transform: scale(1.05); }
-  .bingo-banner.blackout { background: linear-gradient(135deg, #FFD700, #FFA500); }
-  .bingo-banner.blackout .bingo-email-btn { color: #E87722; }
-
-  @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.02); } }
 
   @media print {
     body { padding: 0; background: white; }
-    .page { box-shadow: none; border-radius: 0; padding: 16px; }
-    .cell { min-height: 80px; font-size: 11px; }
-    .cell:hover { transform: none; box-shadow: none; }
+    .game-wrapper.active { flex-direction: row; }
+    .game-main, .game-sidebar { box-shadow: none; border: 1px solid #ddd; }
     .cell.checked { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-    .modal-overlay, .log-panel, .footer-btns, .setup-gate { display: none !important; }
-    .game-area { display: block !important; }
-  }
-
-  @media (max-width: 600px) {
-    .grid { gap: 4px; }
-    .cell { min-height: 78px; font-size: 10px; padding: 6px 4px; border-radius: 10px; }
-    .cell .emoji { font-size: 16px; }
-    h1 { font-size: 26px; }
-    .page { padding: 18px 12px; }
-    .setup-gate input { width: 220px; font-size: 16px; }
+    .setup-page, .modal-overlay { display: none !important; }
+    .game-wrapper { display: flex !important; }
+    .reset-btn { display: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="page" role="main" aria-label="Bingo card">
-  <div class="header">
-    <h1>Offsite Bingo</h1>
-    <div class="subtitle">EMEA Product Specialists Edition</div>
+<!-- SETUP GATE -->
+<div class="setup-page" id="setup-gate">
+  <h1>Offsite Bingo</h1>
+  <div class="subtitle">EMEA Product Specialists Edition</div>
 
-    <div class="rules-toggle" onclick="document.querySelector('.rules-panel').classList.toggle('open')" role="button" tabindex="0">
-      How to Play
-    </div>
-
-    <div class="rules-panel" role="region" aria-label="Rules">
-      <h3>The Goal</h3>
-      <p>Be the first to complete a <strong>row, column, or diagonal</strong> (5 in a row).</p>
-      <h3>How It Works</h3>
-      <ul>
-        <li>Enter your name to get your <strong>unique randomised card</strong>.</li>
-        <li>When you spot something happening in real life, <strong>tap the square</strong>.</li>
-        <li>You'll be asked for an optional note (who said it, what session) — for validation.</li>
-        <li>The centre square is <strong>free</strong> — because someone will definitely say "So..."</li>
-      </ul>
-      <h3>Winning</h3>
-      <ul>
-        <li>When you get a line, the card will prompt you to <strong>email Silviu</strong> with your claim.</li>
-        <li>The group validates your 5 squares — timestamps + notes are your evidence.</li>
-        <li>If a square is rejected, play continues.</li>
-      </ul>
-      <h3>Bonus: Blackout</h3>
-      <ul>
-        <li>After someone wins a line, keep playing until someone fills <strong>the whole card</strong>.</li>
-        <li><strong>No self-triggering</strong>: you can't say something yourself to fill your own square.</li>
-      </ul>
-    </div>
+  <div class="rules-toggle" onclick="document.querySelector('.rules-panel').classList.toggle('open')" role="button" tabindex="0">How to Play</div>
+  <div class="rules-panel" role="region" aria-label="Rules">
+    <h3>The Goal</h3>
+    <p>Be the first to complete a <strong>row, column, or diagonal</strong> (5 in a row).</p>
+    <h3>How It Works</h3>
+    <ul>
+      <li>Enter your name to get your <strong>unique randomised card</strong>.</li>
+      <li>When you spot something happening, <strong>tap the square</strong>.</li>
+      <li>Add an optional note (who said it, which session) — this is your evidence.</li>
+      <li>The centre square is <strong>free</strong> and always checked.</li>
+    </ul>
+    <h3>Winning</h3>
+    <ul>
+      <li>When you get BINGO, <strong>take a screenshot</strong> (the activity log is visible on the right).</li>
+      <li>Post it in the <strong>team Slack channel</strong> with "BINGO!" 🎉</li>
+      <li>The group validates your squares — timestamps + notes are your evidence.</li>
+    </ul>
+    <h3>Bonus: Blackout</h3>
+    <ul>
+      <li>After someone wins a line, keep playing for <strong>full card blackout</strong>.</li>
+      <li><strong>No self-triggering</strong>: you can't say something yourself to fill your own square.</li>
+    </ul>
   </div>
 
-  <!-- SETUP GATE: must enter name to play -->
-  <div class="setup-gate" id="setup-gate">
-    <div class="gate-emoji">🎯</div>
-    <h2>Enter your name to start</h2>
-    <p>Your card will be randomised based on your name — everyone gets the same squares in a different order.</p>
-    <input type="text" id="setup-name" placeholder="Your name" autocomplete="off" aria-label="Enter your name">
-    <br>
-    <button class="start-btn" id="start-btn" onclick="startGame()" disabled>Start Playing</button>
-    <div class="gate-hint">Your name is used to generate your unique card layout</div>
-  </div>
+  <div class="gate-emoji">🎯</div>
+  <h2>Enter your name to start</h2>
+  <p>Your card is randomised based on your name — everyone gets the same squares in a different order.</p>
+  <input type="text" id="setup-name" placeholder="Your name" autocomplete="off" aria-label="Enter your name">
+  <br>
+  <button class="start-btn" id="start-btn" onclick="startGame()" disabled>Start Playing</button>
+  <div class="gate-hint">Your name is used to generate your unique card layout</div>
+</div>
 
-  <!-- GAME AREA: hidden until name entered -->
-  <div class="game-area" id="game-area">
-    <div class="player-bar">
-      Playing as: <span class="player-label" id="player-display"></span>
+<!-- GAME: grid + sidebar -->
+<div class="game-wrapper" id="game-wrapper">
+  <div class="game-main">
+    <div class="game-header">
+      <h1>Offsite Bingo</h1>
     </div>
+    <div class="player-bar">Playing as: <span class="player-label" id="player-display"></span></div>
 
     <div class="bingo-banner" id="bingo-banner">
       <div class="bingo-title" id="bingo-title">B I N G O !</div>
-      <div class="bingo-sub" id="bingo-sub">You got a line! Send your claim to get it validated.</div>
-      <button class="bingo-email-btn" id="bingo-email-btn" onclick="sendBingoEmail()">📧 Email Silviu to Claim</button>
+      <div class="bingo-sub" id="bingo-sub">Screenshot this page and post in Slack! 📸</div>
     </div>
 
     <div class="grid" id="grid" role="grid" aria-label="5 by 5 bingo grid"></div>
 
-    <div class="footer">
+    <div class="game-footer">
       <span class="left">EMEA Product Specialists Offsite</span>
-      <div class="footer-btns">
-        <button class="log-btn" onclick="document.querySelector('.log-panel').classList.toggle('open')">Activity Log</button>
-        <button class="reset-btn" onclick="resetAll()">Reset</button>
-      </div>
+      <button class="reset-btn" onclick="resetAll()">Reset Card</button>
       <span class="score" aria-live="polite"><span id="count">0</span>/25</span>
     </div>
+  </div>
 
-    <div class="log-panel" id="log-panel" role="region" aria-label="Activity log">
-      <h3>Activity Log</h3>
-      <div class="log-entries" id="log-entries">
-        <div class="log-empty">No squares marked yet.</div>
-      </div>
+  <div class="game-sidebar">
+    <div class="sidebar-title">📋 Activity Log</div>
+    <div class="sidebar-sub">Evidence for your bingo claim — visible in screenshots</div>
+    <div class="log-entries" id="log-entries">
+      <div class="log-empty">No squares marked yet.</div>
     </div>
   </div>
 </div>
@@ -333,32 +299,14 @@ const SQUARES = [
   { emoji: '🤦', text: '"Let\'s take this offline" (while already in person)' },
 ];
 
-const FREE = { emoji: '⭐', text: 'FREE SPACE\nSomeone says "So..."' };
-const NOTIFY_EMAIL = 'silviu.tofan@databricks.com';
-
-let state = {
-  playerName: '',
-  order: [],
-  checked: {},
-  log: [],
-  lineBingoSent: false,
-  blackoutSent: false,
-};
-
+let state = { playerName: '', order: [], checked: {}, log: [], lineBingoShown: false, blackoutShown: false };
 let pendingCell = null;
 
-// --- Setup gate ---
-
+// --- Setup ---
 const setupInput = document.getElementById('setup-name');
 const startBtn = document.getElementById('start-btn');
-
-setupInput.addEventListener('input', () => {
-  startBtn.disabled = setupInput.value.trim().length === 0;
-});
-
-setupInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && setupInput.value.trim()) startGame();
-});
+setupInput.addEventListener('input', () => { startBtn.disabled = !setupInput.value.trim(); });
+setupInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && setupInput.value.trim()) startGame(); });
 
 function startGame() {
   const name = setupInput.value.trim();
@@ -366,12 +314,11 @@ function startGame() {
   state.playerName = name;
   document.getElementById('player-display').textContent = name;
   document.getElementById('setup-gate').style.display = 'none';
-  document.getElementById('game-area').classList.add('active');
+  document.getElementById('game-wrapper').classList.add('active');
   shuffleGrid();
 }
 
-// --- PRNG & shuffle ---
-
+// --- PRNG ---
 function seededRandom(seed) {
   return function() {
     let t = seed += 0x6D2B79F5;
@@ -380,41 +327,33 @@ function seededRandom(seed) {
     return ((t ^ t >>> 14) >>> 0) / 4294967296;
   };
 }
-
 function hashString(s) {
-  let hash = 0;
-  for (let i = 0; i < s.length; i++) {
-    hash = ((hash << 5) - hash) + s.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash);
+  let h = 0;
+  for (let i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; }
+  return Math.abs(h);
 }
-
 function shuffleArray(arr, rng) {
   const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
   return a;
 }
 
 function shuffleGrid() {
-  const seed = hashString(state.playerName + '-bingo-2026');
-  const rng = seededRandom(seed);
+  const rng = seededRandom(hashString(state.playerName + '-bingo-2026'));
   state.order = shuffleArray([...Array(SQUARES.length).keys()], rng);
   state.checked = {};
   state.log = [];
-  state.lineBingoSent = false;
-  state.blackoutSent = false;
-  renderGrid();
-  renderLog();
-  updateScore();
+  state.lineBingoShown = false;
+  state.blackoutShown = false;
+  // Free space is always "checked" — log it
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  state.log.push({ idx: 'free', time: timeStr, text: 'FREE: Someone says "So..."', emoji: '⭐', note: 'Always checked', action: 'marked' });
+  renderGrid(); renderLog(); updateScore();
   document.getElementById('bingo-banner').classList.remove('show', 'blackout');
 }
 
 // --- Grid ---
-
 function renderGrid() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
@@ -423,19 +362,15 @@ function renderGrid() {
     const cell = document.createElement('div');
     cell.setAttribute('role', 'gridcell');
     cell.setAttribute('tabindex', '0');
-
     if (i === 12) {
-      cell.className = 'cell free';
+      cell.className = 'cell free checked';
       cell.innerHTML = '<span class="emoji" aria-hidden="true">⭐</span><span class="text">FREE SPACE<br>Someone says "So..."</span>';
-      cell.setAttribute('aria-label', 'Free space');
+      cell.setAttribute('aria-label', 'Free space — always checked');
     } else {
       const dataIdx = state.order[sqIdx];
       const sq = SQUARES[dataIdx];
       cell.className = 'cell' + (state.checked[dataIdx] ? ' checked' : '');
-      cell.dataset.idx = dataIdx;
-      const tsHtml = state.checked[dataIdx]
-        ? '<span class="ts">' + state.checked[dataIdx].time + '</span>'
-        : '<span class="ts"></span>';
+      const tsHtml = state.checked[dataIdx] ? '<span class="ts">' + state.checked[dataIdx].time + '</span>' : '<span class="ts"></span>';
       cell.innerHTML = '<span class="emoji" aria-hidden="true">' + sq.emoji + '</span><span class="text">' + sq.text + '</span>' + tsHtml;
       cell.setAttribute('aria-label', sq.text);
       cell.onclick = () => handleCellClick(cell, dataIdx);
@@ -446,20 +381,15 @@ function renderGrid() {
   }
 }
 
-// --- Cell interaction ---
-
+// --- Interaction ---
 function handleCellClick(cell, idx) {
   if (state.checked[idx]) {
     const now = new Date();
-    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    state.log.push({ idx, time: timeStr, text: SQUARES[idx].text, emoji: SQUARES[idx].emoji, note: '', action: 'unmarked' });
+    const ts = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    state.log.push({ idx, time: ts, text: SQUARES[idx].text, emoji: SQUARES[idx].emoji, note: '', action: 'unmarked' });
     delete state.checked[idx];
     renderGrid(); renderLog(); updateScore();
-    // Re-check bingo state (might lose a line)
-    if (!getBingoLines().length) {
-      document.getElementById('bingo-banner').classList.remove('show');
-      state.lineBingoSent = false;
-    }
+    if (!getBingoLines().length) { document.getElementById('bingo-banner').classList.remove('show'); state.lineBingoShown = false; }
     return;
   }
   pendingCell = { cell, idx };
@@ -468,170 +398,80 @@ function handleCellClick(cell, idx) {
   document.getElementById('modal').classList.add('open');
   setTimeout(() => document.getElementById('modal-note').focus(), 100);
 }
-
-function confirmNote() {
-  if (!pendingCell) return;
-  markSquare(pendingCell.idx, document.getElementById('modal-note').value.trim());
-  closeModal();
-}
-
-function skipNote() {
-  if (!pendingCell) return;
-  markSquare(pendingCell.idx, '');
-  closeModal();
-}
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-  pendingCell = null;
-}
+function confirmNote() { if (!pendingCell) return; markSquare(pendingCell.idx, document.getElementById('modal-note').value.trim()); closeModal(); }
+function skipNote() { if (!pendingCell) return; markSquare(pendingCell.idx, ''); closeModal(); }
+function closeModal() { document.getElementById('modal').classList.remove('open'); pendingCell = null; }
 
 function markSquare(idx, note) {
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  state.checked[idx] = { time: timeStr, note };
-  state.log.push({ idx, time: timeStr, text: SQUARES[idx].text, emoji: SQUARES[idx].emoji, note, action: 'marked' });
-  renderGrid(); renderLog(); updateScore();
-  checkBingo();
+  const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  state.checked[idx] = { time: ts, note };
+  state.log.push({ idx, time: ts, text: SQUARES[idx].text, emoji: SQUARES[idx].emoji, note, action: 'marked' });
+  renderGrid(); renderLog(); updateScore(); checkBingo();
 }
 
-// --- Score ---
-
-function updateScore() {
-  document.getElementById('count').textContent = Object.keys(state.checked).length + 1; // +1 free
-}
+function updateScore() { document.getElementById('count').textContent = Object.keys(state.checked).length + 1; }
 
 // --- Log ---
-
 function renderLog() {
   const el = document.getElementById('log-entries');
   if (!state.log.length) { el.innerHTML = '<div class="log-empty">No squares marked yet.</div>'; return; }
   el.innerHTML = [...state.log].reverse().map(l =>
     '<div class="log-entry ' + (l.action === 'unmarked' ? 'log-remove' : '') + '">' +
     '<span class="log-time">' + l.time + '</span>' +
-    '<span class="log-action ' + l.action + '">' + (l.action === 'unmarked' ? '✕ unmarked' : '✓ marked') + '</span>' +
+    '<span class="log-action ' + l.action + '">' + (l.action === 'unmarked' ? '✕' : '✓') + '</span>' +
     '<span class="log-text">' + l.emoji + ' ' + l.text + '</span>' +
     (l.note ? '<span class="log-note">' + l.note + '</span>' : '') +
     '</div>'
   ).join('');
 }
 
-// --- Bingo detection ---
-
+// --- Bingo detection (free space = always true) ---
 function getGridBooleans() {
-  const grid = [];
-  let sqIdx = 0;
+  const g = []; let sqIdx = 0;
   for (let i = 0; i < 25; i++) {
-    if (i === 12) { grid.push(true); }
-    else { grid.push(!!state.checked[state.order[sqIdx]]); sqIdx++; }
+    if (i === 12) g.push(true);
+    else { g.push(!!state.checked[state.order[sqIdx]]); sqIdx++; }
   }
-  return grid;
+  return g;
 }
-
 function getBingoLines() {
-  const g = getGridBooleans();
-  const lines = [];
-  // Rows
+  const g = getGridBooleans(); const lines = [];
   for (let r = 0; r < 5; r++) { if (g.slice(r*5, r*5+5).every(Boolean)) lines.push('Row ' + (r+1)); }
-  // Cols
-  for (let c = 0; c < 5; c++) { if ([0,1,2,3,4].every(r => g[r*5+c])) lines.push('Column ' + (c+1)); }
-  // Diags
+  for (let c = 0; c < 5; c++) { if ([0,1,2,3,4].every(r => g[r*5+c])) lines.push('Col ' + (c+1)); }
   if ([0,6,12,18,24].every(i => g[i])) lines.push('Diagonal ↘');
   if ([4,8,12,16,20].every(i => g[i])) lines.push('Diagonal ↙');
   return lines;
 }
-
-function isBlackout() {
-  return Object.keys(state.checked).length === SQUARES.length; // 24 checked + free = 25
-}
+function isBlackout() { return Object.keys(state.checked).length === SQUARES.length; }
 
 function checkBingo() {
   const lines = getBingoLines();
   const blackout = isBlackout();
   const banner = document.getElementById('bingo-banner');
-
-  if (blackout && !state.blackoutSent) {
+  if (blackout && !state.blackoutShown) {
     banner.classList.add('show', 'blackout');
     document.getElementById('bingo-title').textContent = '🏆 BLACKOUT! 🏆';
-    document.getElementById('bingo-sub').textContent = 'You filled the entire card! Send your claim.';
-    state.blackoutSent = true;
-  } else if (lines.length && !state.lineBingoSent) {
-    banner.classList.add('show');
-    banner.classList.remove('blackout');
+    document.getElementById('bingo-sub').textContent = 'Full card! Screenshot this and post in Slack! 📸';
+    state.blackoutShown = true;
+  } else if (lines.length && !state.lineBingoShown) {
+    banner.classList.add('show'); banner.classList.remove('blackout');
     document.getElementById('bingo-title').textContent = 'B I N G O !';
-    document.getElementById('bingo-sub').textContent = 'You got ' + lines.join(' + ') + '! Send your claim to get it validated.';
-    state.lineBingoSent = true;
+    document.getElementById('bingo-sub').textContent = lines.join(' + ') + '! Screenshot this and post in Slack! 📸';
+    state.lineBingoShown = true;
   }
-}
-
-// --- Email ---
-
-function sendBingoEmail() {
-  const lines = getBingoLines();
-  const blackout = isBlackout();
-  const type = blackout ? 'BLACKOUT' : 'BINGO';
-
-  // Build the full log text for clipboard
-  const fullLog = state.log.map(l =>
-    l.time + ' [' + l.action.toUpperCase() + '] ' + l.text + (l.note ? ' -- ' + l.note : '')
-  ).join('\n');
-
-  // Build checked squares list
-  const g = getGridBooleans();
-  let sqIdx = 0;
-  const checkedTexts = [];
-  for (let i = 0; i < 25; i++) {
-    if (i === 12) { checkedTexts.push('FREE: Someone says "So..."'); }
-    else {
-      const dataIdx = state.order[sqIdx];
-      if (state.checked[dataIdx]) checkedTexts.push(SQUARES[dataIdx].text);
-      sqIdx++;
-    }
-  }
-
-  // Short body for mailto (avoids URL length issues)
-  const subject = encodeURIComponent(type + ' claim from ' + state.playerName);
-  const shortBody = encodeURIComponent(
-    type + ' CLAIM\n\n' +
-    'Player: ' + state.playerName + '\n' +
-    'Time: ' + new Date().toLocaleString() + '\n' +
-    (lines.length ? 'Line(s): ' + lines.join(', ') + '\n' : '') +
-    'Score: ' + (Object.keys(state.checked).length + 1) + '/25\n\n' +
-    'Marked squares:\n' +
-    checkedTexts.map(t => '- ' + t).join('\n') + '\n\n' +
-    '(Full activity log copied to clipboard — paste below for validation)'
-  );
-
-  // Copy full log to clipboard, then open mailto
-  const clipboardText = type + ' CLAIM — ' + state.playerName + '\n' +
-    new Date().toLocaleString() + '\n' +
-    (lines.length ? 'Line(s): ' + lines.join(', ') + '\n' : '') +
-    '\nMARKED SQUARES:\n' + checkedTexts.map(t => '- ' + t).join('\n') +
-    '\n\nFULL ACTIVITY LOG:\n' + fullLog;
-
-  navigator.clipboard.writeText(clipboardText).then(() => {
-    window.open('mailto:' + NOTIFY_EMAIL + '?subject=' + subject + '&body=' + shortBody, '_self');
-  }).catch(() => {
-    // Clipboard failed (permissions) — just open mailto
-    window.open('mailto:' + NOTIFY_EMAIL + '?subject=' + subject + '&body=' + shortBody, '_self');
-  });
 }
 
 // --- Reset ---
-
 function resetAll() {
   if (!confirm('Reset your card? This clears all marks and notes.')) return;
-  state.checked = {}; state.log = []; state.lineBingoSent = false; state.blackoutSent = false;
-  renderGrid(); renderLog(); updateScore();
-  document.getElementById('bingo-banner').classList.remove('show', 'blackout');
+  shuffleGrid();
 }
 
-// --- Modal keyboard ---
+// --- Keyboard ---
 document.getElementById('modal-note').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') confirmNote();
   if (e.key === 'Escape') skipNote();
 });
 </script>
-
 </body>
 </html>

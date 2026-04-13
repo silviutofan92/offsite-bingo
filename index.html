@@ -571,47 +571,50 @@ function sendBingoEmail() {
   const blackout = isBlackout();
   const type = blackout ? 'BLACKOUT' : 'BINGO';
 
-  // Build evidence from the log (only marked entries)
-  const markedLog = state.log.filter(l => l.action === 'marked');
-  const evidence = markedLog.map(l =>
-    l.time + ' — ' + l.emoji + ' ' + l.text + (l.note ? ' (Note: ' + l.note + ')' : '')
+  // Build the full log text for clipboard
+  const fullLog = state.log.map(l =>
+    l.time + ' [' + l.action.toUpperCase() + '] ' + l.text + (l.note ? ' -- ' + l.note : '')
   ).join('\n');
 
-  // Build the winning line squares
+  // Build checked squares list
   const g = getGridBooleans();
   let sqIdx = 0;
-  const gridSquares = [];
+  const checkedTexts = [];
   for (let i = 0; i < 25; i++) {
-    if (i === 12) { gridSquares.push({ pos: i, text: 'FREE: Someone says "So..."', checked: true }); }
+    if (i === 12) { checkedTexts.push('FREE: Someone says "So..."'); }
     else {
       const dataIdx = state.order[sqIdx];
-      gridSquares.push({ pos: i, text: SQUARES[dataIdx].text, checked: !!state.checked[dataIdx] });
+      if (state.checked[dataIdx]) checkedTexts.push(SQUARES[dataIdx].text);
       sqIdx++;
     }
   }
 
-  const checkedSquares = gridSquares.filter(s => s.checked).map(s => '✓ ' + s.text).join('\n');
-
-  const subject = encodeURIComponent(type + ' claim from ' + state.playerName + ' — Offsite Bingo');
-  const body = encodeURIComponent(
-    type + ' CLAIM\n' +
-    '══════════════════\n\n' +
+  // Short body for mailto (avoids URL length issues)
+  const subject = encodeURIComponent(type + ' claim from ' + state.playerName);
+  const shortBody = encodeURIComponent(
+    type + ' CLAIM\n\n' +
     'Player: ' + state.playerName + '\n' +
     'Time: ' + new Date().toLocaleString() + '\n' +
-    (lines.length ? 'Winning line(s): ' + lines.join(', ') + '\n' : '') +
+    (lines.length ? 'Line(s): ' + lines.join(', ') + '\n' : '') +
     'Score: ' + (Object.keys(state.checked).length + 1) + '/25\n\n' +
-    'MARKED SQUARES (' + (Object.keys(state.checked).length + 1) + ')\n' +
-    '──────────────────\n' +
-    checkedSquares + '\n\n' +
-    'FULL ACTIVITY LOG\n' +
-    '──────────────────\n' +
-    state.log.map(l =>
-      l.time + ' [' + l.action.toUpperCase() + '] ' + l.emoji + ' ' + l.text + (l.note ? ' — ' + l.note : '')
-    ).join('\n') + '\n\n' +
-    '—\nSent from Offsite Bingo'
+    'Marked squares:\n' +
+    checkedTexts.map(t => '- ' + t).join('\n') + '\n\n' +
+    '(Full activity log copied to clipboard — paste below for validation)'
   );
 
-  window.location.href = 'mailto:' + NOTIFY_EMAIL + '?subject=' + subject + '&body=' + body;
+  // Copy full log to clipboard, then open mailto
+  const clipboardText = type + ' CLAIM — ' + state.playerName + '\n' +
+    new Date().toLocaleString() + '\n' +
+    (lines.length ? 'Line(s): ' + lines.join(', ') + '\n' : '') +
+    '\nMARKED SQUARES:\n' + checkedTexts.map(t => '- ' + t).join('\n') +
+    '\n\nFULL ACTIVITY LOG:\n' + fullLog;
+
+  navigator.clipboard.writeText(clipboardText).then(() => {
+    window.open('mailto:' + NOTIFY_EMAIL + '?subject=' + subject + '&body=' + shortBody, '_self');
+  }).catch(() => {
+    // Clipboard failed (permissions) — just open mailto
+    window.open('mailto:' + NOTIFY_EMAIL + '?subject=' + subject + '&body=' + shortBody, '_self');
+  });
 }
 
 // --- Reset ---

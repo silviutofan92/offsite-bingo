@@ -26,10 +26,7 @@
     box-shadow: 0 12px 48px rgba(0,0,0,0.3);
   }
 
-  .header {
-    text-align: center;
-    margin-bottom: 20px;
-  }
+  .header { text-align: center; margin-bottom: 20px; }
 
   h1 {
     font-size: 32px;
@@ -42,418 +39,160 @@
     margin-bottom: 4px;
   }
 
-  .subtitle {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 12px;
-  }
+  .subtitle { font-size: 14px; color: #555; margin-bottom: 12px; }
 
-  /* Rules section */
   .rules-toggle {
-    display: inline-block;
-    font-size: 13px;
-    color: #FF3621;
-    cursor: pointer;
-    font-weight: 600;
-    border: 1.5px solid #FF3621;
-    border-radius: 8px;
-    padding: 6px 14px;
-    transition: all 0.15s;
-    margin-bottom: 8px;
+    display: inline-block; font-size: 13px; color: #FF3621; cursor: pointer;
+    font-weight: 600; border: 1.5px solid #FF3621; border-radius: 8px;
+    padding: 6px 14px; transition: all 0.15s; margin-bottom: 8px;
   }
-
-  .rules-toggle:hover {
-    background: #FF3621;
-    color: white;
-  }
+  .rules-toggle:hover { background: #FF3621; color: white; }
 
   .rules-panel {
-    display: none;
-    text-align: left;
-    background: #f9f9f9;
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin: 12px 0 20px;
-    font-size: 13px;
-    line-height: 1.6;
-    color: #444;
+    display: none; text-align: left; background: #f9f9f9; border-radius: 12px;
+    padding: 16px 20px; margin: 12px 0 20px; font-size: 13px; line-height: 1.6; color: #444;
   }
-
   .rules-panel.open { display: block; }
-
-  .rules-panel h3 {
-    font-size: 14px;
-    font-weight: 700;
-    color: #1B3139;
-    margin: 12px 0 4px;
-  }
-
+  .rules-panel h3 { font-size: 14px; font-weight: 700; color: #1B3139; margin: 12px 0 4px; }
   .rules-panel h3:first-child { margin-top: 0; }
-
-  .rules-panel ul {
-    margin-left: 18px;
-    margin-bottom: 4px;
-  }
-
+  .rules-panel ul { margin-left: 18px; margin-bottom: 4px; }
   .rules-panel li { margin-bottom: 2px; }
 
-  /* Player name */
-  .player-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+  /* Setup gate */
+  .setup-gate {
+    text-align: center;
+    padding: 40px 20px;
     margin-bottom: 16px;
   }
 
-  .player-bar label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #666;
+  .setup-gate .gate-emoji { font-size: 48px; margin-bottom: 12px; }
+
+  .setup-gate h2 {
+    font-size: 20px; font-weight: 700; color: #1B3139; margin-bottom: 8px;
   }
 
-  .player-bar input {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    padding: 6px 12px;
-    width: 180px;
-    text-align: center;
-    outline: none;
-    transition: border-color 0.15s;
+  .setup-gate p { font-size: 14px; color: #666; margin-bottom: 20px; line-height: 1.5; }
+
+  .setup-gate input {
+    font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 700;
+    border: 3px solid #ddd; border-radius: 12px; padding: 12px 16px;
+    width: 260px; text-align: center; outline: none; transition: border-color 0.15s;
+    display: block; margin: 0 auto 16px;
+  }
+  .setup-gate input:focus { border-color: #FF3621; }
+
+  .setup-gate .start-btn {
+    font-family: 'DM Sans', sans-serif; background: linear-gradient(135deg, #FF3621, #E87722);
+    color: white; border: none; padding: 14px 40px; border-radius: 12px;
+    font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    box-shadow: 0 4px 16px rgba(255, 54, 33, 0.3);
+  }
+  .setup-gate .start-btn:hover { transform: scale(1.05); box-shadow: 0 6px 24px rgba(255, 54, 33, 0.4); }
+  .setup-gate .start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .setup-gate .gate-hint {
+    font-size: 12px; color: #bbb; margin-top: 12px; font-style: italic;
   }
 
-  .player-bar input:focus {
-    border-color: #FF3621;
-  }
+  /* Game area — hidden until started */
+  .game-area { display: none; }
+  .game-area.active { display: block; }
 
-  .shuffle-btn {
-    font-family: 'DM Sans', sans-serif;
-    background: #1B3139;
-    color: white;
-    border: none;
-    padding: 7px 14px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
+  /* Player bar (shown during game) */
+  .player-bar {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-bottom: 16px; font-size: 14px; color: #555;
   }
-
-  .shuffle-btn:hover { background: #2D4A54; }
+  .player-bar .player-label { font-weight: 700; color: #1B3139; }
 
   /* Grid */
   .grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 7px;
-    margin-bottom: 16px;
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 7px; margin-bottom: 16px;
   }
 
   .cell {
-    border: 2.5px solid #ddd;
-    border-radius: 14px;
-    padding: 10px 7px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1.35;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    user-select: none;
-    -webkit-user-select: none;
-    position: relative;
-    background: #fafafa;
+    border: 2.5px solid #ddd; border-radius: 14px; padding: 10px 7px;
+    text-align: center; font-size: 12px; font-weight: 500; line-height: 1.35;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100px; cursor: pointer; transition: all 0.15s ease;
+    user-select: none; -webkit-user-select: none; position: relative; background: #fafafa;
   }
-
-  .cell .emoji {
-    font-size: 20px;
-    margin-bottom: 3px;
-    display: block;
-  }
-
+  .cell .emoji { font-size: 20px; margin-bottom: 3px; display: block; }
   .cell .text { display: block; }
-
-  .cell .ts {
-    display: none;
-    font-size: 9px;
-    color: rgba(255,255,255,0.7);
-    margin-top: 3px;
-    font-weight: 400;
-  }
-
+  .cell .ts { display: none; font-size: 9px; color: rgba(255,255,255,0.7); margin-top: 3px; font-weight: 400; }
   .cell.checked .ts { display: block; }
-
-  .cell:hover {
-    border-color: #FF3621;
-    background: #FFF5F4;
-    transform: scale(1.03);
-    box-shadow: 0 4px 12px rgba(255, 54, 33, 0.15);
-  }
-
+  .cell:hover { border-color: #FF3621; background: #FFF5F4; transform: scale(1.03); box-shadow: 0 4px 12px rgba(255,54,33,0.15); }
   .cell:active { transform: scale(0.97); }
-
-  .cell.checked {
-    background: linear-gradient(135deg, #FF3621, #E84D2E);
-    color: white;
-    border-color: #FF3621;
-    box-shadow: 0 4px 16px rgba(255, 54, 33, 0.3);
-  }
-
-  .cell.checked::after {
-    content: '✓';
-    position: absolute;
-    top: 5px;
-    right: 7px;
-    font-size: 13px;
-    font-weight: 900;
-    opacity: 0.7;
-  }
-
-  .cell.free {
-    background: linear-gradient(135deg, #1B3139, #2D4A54);
-    color: white;
-    border-color: #1B3139;
-    font-weight: 700;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
-  }
-
+  .cell.checked { background: linear-gradient(135deg, #FF3621, #E84D2E); color: white; border-color: #FF3621; box-shadow: 0 4px 16px rgba(255,54,33,0.3); }
+  .cell.checked::after { content: '✓'; position: absolute; top: 5px; right: 7px; font-size: 13px; font-weight: 900; opacity: 0.7; }
+  .cell.free { background: linear-gradient(135deg, #1B3139, #2D4A54); color: white; border-color: #1B3139; font-weight: 700; box-shadow: inset 0 2px 8px rgba(0,0,0,0.2); }
   .cell.free:hover { transform: none; cursor: default; }
   .cell.free .emoji { font-size: 24px; }
 
   /* Footer */
-  .footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 12px;
-    border-top: 1px solid #eee;
-  }
-
+  .footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #eee; }
   .footer .left { font-size: 11px; color: #bbb; }
-
   .footer-btns { display: flex; gap: 8px; align-items: center; }
-
   .reset-btn, .log-btn {
-    font-family: 'DM Sans', sans-serif;
-    background: #eee;
-    border: none;
-    padding: 7px 14px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #666;
-    cursor: pointer;
-    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif; background: #eee; border: none;
+    padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    color: #666; cursor: pointer; transition: all 0.15s;
   }
-
   .reset-btn:hover, .log-btn:hover { background: #ddd; color: #333; }
-
-  .score {
-    font-size: 13px;
-    font-weight: 700;
-    color: #FF3621;
-    min-width: 50px;
-    text-align: right;
-  }
+  .score { font-size: 13px; font-weight: 700; color: #FF3621; min-width: 50px; text-align: right; }
 
   /* Activity log */
-  .log-panel {
-    display: none;
-    margin-top: 16px;
-    border-top: 1px solid #eee;
-    padding-top: 12px;
-  }
-
+  .log-panel { display: none; margin-top: 16px; border-top: 1px solid #eee; padding-top: 12px; }
   .log-panel.open { display: block; }
-
-  .log-panel h3 {
-    font-size: 13px;
-    font-weight: 700;
-    color: #1B3139;
-    margin-bottom: 8px;
-  }
-
-  .log-entries {
-    max-height: 240px;
-    overflow-y: auto;
-    font-size: 12px;
-    color: #555;
-  }
-
-  .log-entry {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 6px 0;
-    border-bottom: 1px solid #f0f0f0;
-    gap: 12px;
-  }
-
-  .log-entry .log-time {
-    font-weight: 700;
-    color: #FF3621;
-    white-space: nowrap;
-    min-width: 55px;
-  }
-
+  .log-panel h3 { font-size: 13px; font-weight: 700; color: #1B3139; margin-bottom: 8px; }
+  .log-entries { max-height: 240px; overflow-y: auto; font-size: 12px; color: #555; }
+  .log-entry { display: flex; justify-content: space-between; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid #f0f0f0; gap: 12px; }
+  .log-entry .log-time { font-weight: 700; color: #FF3621; white-space: nowrap; min-width: 65px; }
   .log-entry .log-text { flex: 1; }
-
-  .log-entry .log-note {
-    font-style: italic;
-    color: #999;
-    font-size: 11px;
-  }
-
-  .log-entry.log-remove {
-    opacity: 0.5;
-  }
-
-  .log-entry.log-remove .log-time {
-    color: #999;
-  }
-
-  .log-entry .log-action {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-radius: 4px;
-    padding: 1px 5px;
-    white-space: nowrap;
-  }
-
-  .log-action.marked {
-    background: #FFECE9;
-    color: #FF3621;
-  }
-
-  .log-action.unmarked {
-    background: #f0f0f0;
-    color: #999;
-  }
-
-  .log-empty {
-    color: #bbb;
-    font-style: italic;
-    font-size: 12px;
-  }
+  .log-entry .log-note { font-style: italic; color: #999; font-size: 11px; }
+  .log-entry.log-remove { opacity: 0.5; }
+  .log-entry.log-remove .log-time { color: #999; }
+  .log-entry .log-action { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
+  .log-action.marked { background: #FFECE9; color: #FF3621; }
+  .log-action.unmarked { background: #f0f0f0; color: #999; }
+  .log-empty { color: #bbb; font-style: italic; font-size: 12px; }
 
   /* Note modal */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-  }
-
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: white;
-    border-radius: 16px;
-    padding: 24px;
-    width: 320px;
-    box-shadow: 0 12px 48px rgba(0,0,0,0.3);
-    text-align: center;
-  }
-
-  .modal h3 {
-    font-size: 15px;
-    font-weight: 700;
-    color: #1B3139;
-    margin-bottom: 4px;
-  }
-
-  .modal .modal-square {
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 12px;
-  }
-
-  .modal input {
-    font-family: 'DM Sans', sans-serif;
-    width: 100%;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 13px;
-    outline: none;
-    margin-bottom: 12px;
-    transition: border-color 0.15s;
-  }
-
+  .modal { background: white; border-radius: 16px; padding: 24px; width: 340px; box-shadow: 0 12px 48px rgba(0,0,0,0.3); text-align: center; }
+  .modal h3 { font-size: 15px; font-weight: 700; color: #1B3139; margin-bottom: 4px; }
+  .modal .modal-square { font-size: 13px; color: #666; margin-bottom: 12px; }
+  .modal input { font-family: 'DM Sans', sans-serif; width: 100%; border: 2px solid #ddd; border-radius: 8px; padding: 8px 12px; font-size: 13px; outline: none; margin-bottom: 12px; transition: border-color 0.15s; }
   .modal input:focus { border-color: #FF3621; }
-
-  .modal-btns {
-    display: flex;
-    gap: 8px;
-  }
-
-  .modal-btns button {
-    font-family: 'DM Sans', sans-serif;
-    flex: 1;
-    padding: 9px;
-    border-radius: 8px;
-    border: none;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-confirm {
-    background: #FF3621;
-    color: white;
-  }
-
+  .modal-btns { display: flex; gap: 8px; }
+  .modal-btns button { font-family: 'DM Sans', sans-serif; flex: 1; padding: 9px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .btn-confirm { background: #FF3621; color: white; }
   .btn-confirm:hover { background: #e0301d; }
-
-  .btn-skip {
-    background: #eee;
-    color: #666;
-  }
-
+  .btn-skip { background: #eee; color: #666; }
   .btn-skip:hover { background: #ddd; }
-
-  .btn-undo {
-    background: #eee;
-    color: #999;
-    font-size: 11px;
-    padding: 6px;
-  }
 
   /* Bingo banner */
   .bingo-banner {
-    display: none;
-    text-align: center;
-    padding: 16px;
-    margin-bottom: 16px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #FF3621, #E87722);
-    color: white;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: 4px;
-    animation: pulse 0.6s ease infinite alternate;
+    display: none; text-align: center; padding: 20px; margin-bottom: 16px;
+    border-radius: 12px; background: linear-gradient(135deg, #FF3621, #E87722);
+    color: white; font-weight: 900; animation: pulse 0.6s ease infinite alternate;
   }
-
   .bingo-banner.show { display: block; }
-
-  @keyframes pulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.03); }
+  .bingo-banner .bingo-title { font-size: 28px; letter-spacing: 4px; margin-bottom: 8px; }
+  .bingo-banner .bingo-sub { font-size: 13px; font-weight: 500; opacity: 0.9; margin-bottom: 12px; }
+  .bingo-banner .bingo-email-btn {
+    font-family: 'DM Sans', sans-serif; background: white; color: #FF3621;
+    border: none; padding: 10px 24px; border-radius: 8px; font-size: 14px;
+    font-weight: 700; cursor: pointer; transition: all 0.15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
+  .bingo-banner .bingo-email-btn:hover { transform: scale(1.05); }
+  .bingo-banner.blackout { background: linear-gradient(135deg, #FFD700, #FFA500); }
+  .bingo-banner.blackout .bingo-email-btn { color: #E87722; }
+
+  @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.02); } }
 
   @media print {
     body { padding: 0; background: white; }
@@ -461,7 +200,8 @@
     .cell { min-height: 80px; font-size: 11px; }
     .cell:hover { transform: none; box-shadow: none; }
     .cell.checked { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-    .modal-overlay, .log-panel, .footer-btns { display: none !important; }
+    .modal-overlay, .log-panel, .footer-btns, .setup-gate { display: none !important; }
+    .game-area { display: block !important; }
   }
 
   @media (max-width: 600px) {
@@ -470,7 +210,7 @@
     .cell .emoji { font-size: 16px; }
     h1 { font-size: 26px; }
     .page { padding: 18px 12px; }
-    .player-bar { flex-wrap: wrap; }
+    .setup-gate input { width: 220px; font-size: 16px; }
   }
 </style>
 </head>
@@ -481,64 +221,73 @@
     <h1>Offsite Bingo</h1>
     <div class="subtitle">EMEA Product Specialists Edition</div>
 
-    <div class="rules-toggle" onclick="document.querySelector('.rules-panel').classList.toggle('open')" role="button" tabindex="0" aria-expanded="false">
+    <div class="rules-toggle" onclick="document.querySelector('.rules-panel').classList.toggle('open')" role="button" tabindex="0">
       How to Play
     </div>
 
     <div class="rules-panel" role="region" aria-label="Rules">
       <h3>The Goal</h3>
       <p>Be the first to complete a <strong>row, column, or diagonal</strong> (5 in a row).</p>
-
       <h3>How It Works</h3>
       <ul>
-        <li>When you spot something on the card happening in real life, <strong>tap the square</strong>.</li>
-        <li>You'll be asked for an optional note (who said it, what session, etc.) — this is for validation later.</li>
+        <li>Enter your name to get your <strong>unique randomised card</strong>.</li>
+        <li>When you spot something happening in real life, <strong>tap the square</strong>.</li>
+        <li>You'll be asked for an optional note (who said it, what session) — for validation.</li>
         <li>The centre square is <strong>free</strong> — because someone will definitely say "So..."</li>
-        <li>Your card layout is <strong>randomised</strong> — everyone has the same squares in a different order, so it's a fair race.</li>
       </ul>
-
-      <h3>Validation</h3>
+      <h3>Winning</h3>
       <ul>
-        <li>When someone shouts "BINGO!", the group validates their 5 squares.</li>
-        <li>Each square has a <strong>timestamp</strong> and optional note in the activity log.</li>
-        <li>The group votes: does each claim count? Majority rules.</li>
+        <li>When you get a line, the card will prompt you to <strong>email Silviu</strong> with your claim.</li>
+        <li>The group validates your 5 squares — timestamps + notes are your evidence.</li>
         <li>If a square is rejected, play continues.</li>
       </ul>
-
-      <h3>Bonus Rules (optional)</h3>
+      <h3>Bonus: Blackout</h3>
       <ul>
-        <li><strong>Blackout</strong>: After someone wins a line, keep playing until someone fills the whole card.</li>
-        <li><strong>No self-triggering</strong>: You can't say something yourself to fill your own square.</li>
-        <li><strong>Double points</strong>: If the same person triggers 3+ of your squares, that's a bonus.</li>
+        <li>After someone wins a line, keep playing until someone fills <strong>the whole card</strong>.</li>
+        <li><strong>No self-triggering</strong>: you can't say something yourself to fill your own square.</li>
       </ul>
     </div>
   </div>
 
-  <div class="player-bar">
-    <label for="player-name">Your name:</label>
-    <input type="text" id="player-name" placeholder="Enter your name" autocomplete="off">
-    <button class="shuffle-btn" onclick="shuffleGrid()" title="Randomise your grid layout">Shuffle</button>
+  <!-- SETUP GATE: must enter name to play -->
+  <div class="setup-gate" id="setup-gate">
+    <div class="gate-emoji">🎯</div>
+    <h2>Enter your name to start</h2>
+    <p>Your card will be randomised based on your name — everyone gets the same squares in a different order.</p>
+    <input type="text" id="setup-name" placeholder="Your name" autocomplete="off" aria-label="Enter your name">
+    <br>
+    <button class="start-btn" id="start-btn" onclick="startGame()" disabled>Start Playing</button>
+    <div class="gate-hint">Your name is used to generate your unique card layout</div>
   </div>
 
-  <div class="bingo-banner" id="bingo-banner">B I N G O !</div>
-
-  <div class="grid" id="grid" role="grid" aria-label="5 by 5 bingo grid">
-    <!-- Populated by JS -->
-  </div>
-
-  <div class="footer">
-    <span class="left">EMEA Product Specialists Offsite</span>
-    <div class="footer-btns">
-      <button class="log-btn" onclick="document.querySelector('.log-panel').classList.toggle('open')">Activity Log</button>
-      <button class="reset-btn" onclick="resetAll()">Reset</button>
+  <!-- GAME AREA: hidden until name entered -->
+  <div class="game-area" id="game-area">
+    <div class="player-bar">
+      Playing as: <span class="player-label" id="player-display"></span>
     </div>
-    <span class="score" aria-live="polite"><span id="count">0</span>/25</span>
-  </div>
 
-  <div class="log-panel" id="log-panel" role="region" aria-label="Activity log">
-    <h3>Activity Log</h3>
-    <div class="log-entries" id="log-entries">
-      <div class="log-empty">No squares marked yet.</div>
+    <div class="bingo-banner" id="bingo-banner">
+      <div class="bingo-title" id="bingo-title">B I N G O !</div>
+      <div class="bingo-sub" id="bingo-sub">You got a line! Send your claim to get it validated.</div>
+      <button class="bingo-email-btn" id="bingo-email-btn" onclick="sendBingoEmail()">📧 Email Silviu to Claim</button>
+    </div>
+
+    <div class="grid" id="grid" role="grid" aria-label="5 by 5 bingo grid"></div>
+
+    <div class="footer">
+      <span class="left">EMEA Product Specialists Offsite</span>
+      <div class="footer-btns">
+        <button class="log-btn" onclick="document.querySelector('.log-panel').classList.toggle('open')">Activity Log</button>
+        <button class="reset-btn" onclick="resetAll()">Reset</button>
+      </div>
+      <span class="score" aria-live="polite"><span id="count">0</span>/25</span>
+    </div>
+
+    <div class="log-panel" id="log-panel" role="region" aria-label="Activity log">
+      <h3>Activity Log</h3>
+      <div class="log-entries" id="log-entries">
+        <div class="log-empty">No squares marked yet.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -570,7 +319,6 @@ const SQUARES = [
   { emoji: '⬆️', text: 'Someone namedrops a VP+' },
   { emoji: '🔬', text: 'Says "basically" before every explanation' },
   { emoji: '🧠', text: '"It\'s not documented yet"' },
-  // index 12 = FREE SPACE (handled separately)
   { emoji: '📩', text: '"Feel free to reach out"' },
   { emoji: '🏔️', text: '"Above my pay grade"' },
   { emoji: '🦉', text: 'Breaks a long silence with one piece of wisdom' },
@@ -585,18 +333,46 @@ const SQUARES = [
   { emoji: '🤦', text: '"Let\'s take this offline" (while already in person)' },
 ];
 
-const FREE = { emoji: '⭐', text: 'FREE SPACE\nSomeone says "So..."', free: true };
+const FREE = { emoji: '⭐', text: 'FREE SPACE\nSomeone says "So..."' };
+const NOTIFY_EMAIL = 'silviu.tofan@databricks.com';
 
 let state = {
-  order: [],        // indices into SQUARES
-  checked: {},      // index -> { time, note }
-  log: [],          // { time, text, note }
+  playerName: '',
+  order: [],
+  checked: {},
+  log: [],
+  lineBingoSent: false,
+  blackoutSent: false,
 };
 
 let pendingCell = null;
 
+// --- Setup gate ---
+
+const setupInput = document.getElementById('setup-name');
+const startBtn = document.getElementById('start-btn');
+
+setupInput.addEventListener('input', () => {
+  startBtn.disabled = setupInput.value.trim().length === 0;
+});
+
+setupInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && setupInput.value.trim()) startGame();
+});
+
+function startGame() {
+  const name = setupInput.value.trim();
+  if (!name) return;
+  state.playerName = name;
+  document.getElementById('player-display').textContent = name;
+  document.getElementById('setup-gate').style.display = 'none';
+  document.getElementById('game-area').classList.add('active');
+  shuffleGrid();
+}
+
+// --- PRNG & shuffle ---
+
 function seededRandom(seed) {
-  // Simple seeded PRNG (mulberry32)
   return function() {
     let t = seed += 0x6D2B79F5;
     t = Math.imul(t ^ t >>> 15, t | 1);
@@ -624,23 +400,24 @@ function shuffleArray(arr, rng) {
 }
 
 function shuffleGrid() {
-  const name = document.getElementById('player-name').value.trim() || 'default';
-  const seed = hashString(name + '-bingo-2026');
+  const seed = hashString(state.playerName + '-bingo-2026');
   const rng = seededRandom(seed);
   state.order = shuffleArray([...Array(SQUARES.length).keys()], rng);
   state.checked = {};
   state.log = [];
+  state.lineBingoSent = false;
+  state.blackoutSent = false;
   renderGrid();
   renderLog();
   updateScore();
-  document.getElementById('bingo-banner').classList.remove('show');
+  document.getElementById('bingo-banner').classList.remove('show', 'blackout');
 }
+
+// --- Grid ---
 
 function renderGrid() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
-
-  // Insert 24 shuffled squares + 1 free space at position 12
   let sqIdx = 0;
   for (let i = 0; i < 25; i++) {
     const cell = document.createElement('div');
@@ -648,25 +425,19 @@ function renderGrid() {
     cell.setAttribute('tabindex', '0');
 
     if (i === 12) {
-      // Free space
       cell.className = 'cell free';
-      cell.innerHTML = `<span class="emoji" aria-hidden="true">${FREE.emoji}</span><span class="text">FREE SPACE<br>Someone says "So..."</span>`;
+      cell.innerHTML = '<span class="emoji" aria-hidden="true">⭐</span><span class="text">FREE SPACE<br>Someone says "So..."</span>';
       cell.setAttribute('aria-label', 'Free space');
-      cell.dataset.idx = 'free';
     } else {
       const dataIdx = state.order[sqIdx];
       const sq = SQUARES[dataIdx];
       cell.className = 'cell' + (state.checked[dataIdx] ? ' checked' : '');
       cell.dataset.idx = dataIdx;
-
       const tsHtml = state.checked[dataIdx]
-        ? `<span class="ts">${state.checked[dataIdx].time}</span>`
+        ? '<span class="ts">' + state.checked[dataIdx].time + '</span>'
         : '<span class="ts"></span>';
-
-      cell.innerHTML = `<span class="emoji" aria-hidden="true">${sq.emoji}</span><span class="text">${sq.text}</span>${tsHtml}`;
+      cell.innerHTML = '<span class="emoji" aria-hidden="true">' + sq.emoji + '</span><span class="text">' + sq.text + '</span>' + tsHtml;
       cell.setAttribute('aria-label', sq.text);
-      cell.setAttribute('aria-checked', !!state.checked[dataIdx]);
-
       cell.onclick = () => handleCellClick(cell, dataIdx);
       cell.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') handleCellClick(cell, dataIdx); };
       sqIdx++;
@@ -675,31 +446,24 @@ function renderGrid() {
   }
 }
 
+// --- Cell interaction ---
+
 function handleCellClick(cell, idx) {
   if (state.checked[idx]) {
-    // Uncheck — log the removal but keep history
     const now = new Date();
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    state.log.push({
-      idx,
-      time: timeStr,
-      text: SQUARES[idx].text,
-      emoji: SQUARES[idx].emoji,
-      note: '',
-      action: 'unmarked',
-    });
+    state.log.push({ idx, time: timeStr, text: SQUARES[idx].text, emoji: SQUARES[idx].emoji, note: '', action: 'unmarked' });
     delete state.checked[idx];
-    renderGrid();
-    renderLog();
-    updateScore();
-    document.getElementById('bingo-banner').classList.remove('show');
+    renderGrid(); renderLog(); updateScore();
+    // Re-check bingo state (might lose a line)
+    if (!getBingoLines().length) {
+      document.getElementById('bingo-banner').classList.remove('show');
+      state.lineBingoSent = false;
+    }
     return;
   }
-
-  // Show modal for note
   pendingCell = { cell, idx };
-  const sq = SQUARES[idx];
-  document.getElementById('modal-square').textContent = sq.emoji + ' ' + sq.text;
+  document.getElementById('modal-square').textContent = SQUARES[idx].emoji + ' ' + SQUARES[idx].text;
   document.getElementById('modal-note').value = '';
   document.getElementById('modal').classList.add('open');
   setTimeout(() => document.getElementById('modal-note').focus(), 100);
@@ -707,8 +471,7 @@ function handleCellClick(cell, idx) {
 
 function confirmNote() {
   if (!pendingCell) return;
-  const note = document.getElementById('modal-note').value.trim();
-  markSquare(pendingCell.idx, note);
+  markSquare(pendingCell.idx, document.getElementById('modal-note').value.trim());
   closeModal();
 }
 
@@ -726,97 +489,145 @@ function closeModal() {
 function markSquare(idx, note) {
   const now = new Date();
   const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
   state.checked[idx] = { time: timeStr, note };
-  state.log.push({
-    idx,
-    time: timeStr,
-    text: SQUARES[idx].text,
-    emoji: SQUARES[idx].emoji,
-    note,
-    action: 'marked',
-  });
-
-  renderGrid();
-  renderLog();
-  updateScore();
+  state.log.push({ idx, time: timeStr, text: SQUARES[idx].text, emoji: SQUARES[idx].emoji, note, action: 'marked' });
+  renderGrid(); renderLog(); updateScore();
   checkBingo();
 }
 
+// --- Score ---
+
 function updateScore() {
-  const checked = Object.keys(state.checked).length + 1; // +1 for free
-  document.getElementById('count').textContent = checked;
+  document.getElementById('count').textContent = Object.keys(state.checked).length + 1; // +1 free
 }
+
+// --- Log ---
 
 function renderLog() {
   const el = document.getElementById('log-entries');
-  if (state.log.length === 0) {
-    el.innerHTML = '<div class="log-empty">No squares marked yet.</div>';
-    return;
-  }
-  el.innerHTML = [...state.log].reverse().map(l => `
-    <div class="log-entry ${l.action === 'unmarked' ? 'log-remove' : ''}">
-      <span class="log-time">${l.time}</span>
-      <span class="log-action ${l.action}">${l.action === 'unmarked' ? '✕ unmarked' : '✓ marked'}</span>
-      <span class="log-text">${l.emoji} ${l.text}</span>
-      ${l.note ? `<span class="log-note">${l.note}</span>` : ''}
-    </div>
-  `).join('');
+  if (!state.log.length) { el.innerHTML = '<div class="log-empty">No squares marked yet.</div>'; return; }
+  el.innerHTML = [...state.log].reverse().map(l =>
+    '<div class="log-entry ' + (l.action === 'unmarked' ? 'log-remove' : '') + '">' +
+    '<span class="log-time">' + l.time + '</span>' +
+    '<span class="log-action ' + l.action + '">' + (l.action === 'unmarked' ? '✕ unmarked' : '✓ marked') + '</span>' +
+    '<span class="log-text">' + l.emoji + ' ' + l.text + '</span>' +
+    (l.note ? '<span class="log-note">' + l.note + '</span>' : '') +
+    '</div>'
+  ).join('');
 }
 
-function checkBingo() {
-  // Build 5x5 boolean grid
+// --- Bingo detection ---
+
+function getGridBooleans() {
   const grid = [];
   let sqIdx = 0;
   for (let i = 0; i < 25; i++) {
-    if (i === 12) {
-      grid.push(true); // free space
-    } else {
-      grid.push(!!state.checked[state.order[sqIdx]]);
+    if (i === 12) { grid.push(true); }
+    else { grid.push(!!state.checked[state.order[sqIdx]]); sqIdx++; }
+  }
+  return grid;
+}
+
+function getBingoLines() {
+  const g = getGridBooleans();
+  const lines = [];
+  // Rows
+  for (let r = 0; r < 5; r++) { if (g.slice(r*5, r*5+5).every(Boolean)) lines.push('Row ' + (r+1)); }
+  // Cols
+  for (let c = 0; c < 5; c++) { if ([0,1,2,3,4].every(r => g[r*5+c])) lines.push('Column ' + (c+1)); }
+  // Diags
+  if ([0,6,12,18,24].every(i => g[i])) lines.push('Diagonal ↘');
+  if ([4,8,12,16,20].every(i => g[i])) lines.push('Diagonal ↙');
+  return lines;
+}
+
+function isBlackout() {
+  return Object.keys(state.checked).length === SQUARES.length; // 24 checked + free = 25
+}
+
+function checkBingo() {
+  const lines = getBingoLines();
+  const blackout = isBlackout();
+  const banner = document.getElementById('bingo-banner');
+
+  if (blackout && !state.blackoutSent) {
+    banner.classList.add('show', 'blackout');
+    document.getElementById('bingo-title').textContent = '🏆 BLACKOUT! 🏆';
+    document.getElementById('bingo-sub').textContent = 'You filled the entire card! Send your claim.';
+    state.blackoutSent = true;
+  } else if (lines.length && !state.lineBingoSent) {
+    banner.classList.add('show');
+    banner.classList.remove('blackout');
+    document.getElementById('bingo-title').textContent = 'B I N G O !';
+    document.getElementById('bingo-sub').textContent = 'You got ' + lines.join(' + ') + '! Send your claim to get it validated.';
+    state.lineBingoSent = true;
+  }
+}
+
+// --- Email ---
+
+function sendBingoEmail() {
+  const lines = getBingoLines();
+  const blackout = isBlackout();
+  const type = blackout ? 'BLACKOUT' : 'BINGO';
+
+  // Build evidence from the log (only marked entries)
+  const markedLog = state.log.filter(l => l.action === 'marked');
+  const evidence = markedLog.map(l =>
+    l.time + ' — ' + l.emoji + ' ' + l.text + (l.note ? ' (Note: ' + l.note + ')' : '')
+  ).join('\n');
+
+  // Build the winning line squares
+  const g = getGridBooleans();
+  let sqIdx = 0;
+  const gridSquares = [];
+  for (let i = 0; i < 25; i++) {
+    if (i === 12) { gridSquares.push({ pos: i, text: 'FREE: Someone says "So..."', checked: true }); }
+    else {
+      const dataIdx = state.order[sqIdx];
+      gridSquares.push({ pos: i, text: SQUARES[dataIdx].text, checked: !!state.checked[dataIdx] });
       sqIdx++;
     }
   }
 
-  // Check rows
-  for (let r = 0; r < 5; r++) {
-    if (grid.slice(r*5, r*5+5).every(Boolean)) { showBingo(); return; }
-  }
-  // Check cols
-  for (let c = 0; c < 5; c++) {
-    if ([0,1,2,3,4].every(r => grid[r*5+c])) { showBingo(); return; }
-  }
-  // Diagonals
-  if ([0,6,12,18,24].every(i => grid[i])) { showBingo(); return; }
-  if ([4,8,12,16,20].every(i => grid[i])) { showBingo(); return; }
+  const checkedSquares = gridSquares.filter(s => s.checked).map(s => '✓ ' + s.text).join('\n');
+
+  const subject = encodeURIComponent(type + ' claim from ' + state.playerName + ' — Offsite Bingo');
+  const body = encodeURIComponent(
+    type + ' CLAIM\n' +
+    '══════════════════\n\n' +
+    'Player: ' + state.playerName + '\n' +
+    'Time: ' + new Date().toLocaleString() + '\n' +
+    (lines.length ? 'Winning line(s): ' + lines.join(', ') + '\n' : '') +
+    'Score: ' + (Object.keys(state.checked).length + 1) + '/25\n\n' +
+    'MARKED SQUARES (' + (Object.keys(state.checked).length + 1) + ')\n' +
+    '──────────────────\n' +
+    checkedSquares + '\n\n' +
+    'FULL ACTIVITY LOG\n' +
+    '──────────────────\n' +
+    state.log.map(l =>
+      l.time + ' [' + l.action.toUpperCase() + '] ' + l.emoji + ' ' + l.text + (l.note ? ' — ' + l.note : '')
+    ).join('\n') + '\n\n' +
+    '—\nSent from Offsite Bingo'
+  );
+
+  window.location.href = 'mailto:' + NOTIFY_EMAIL + '?subject=' + subject + '&body=' + body;
 }
 
-function showBingo() {
-  document.getElementById('bingo-banner').classList.add('show');
-}
+// --- Reset ---
 
 function resetAll() {
   if (!confirm('Reset your card? This clears all marks and notes.')) return;
-  state.checked = {};
-  state.log = [];
-  renderGrid();
-  renderLog();
-  updateScore();
-  document.getElementById('bingo-banner').classList.remove('show');
+  state.checked = {}; state.log = []; state.lineBingoSent = false; state.blackoutSent = false;
+  renderGrid(); renderLog(); updateScore();
+  document.getElementById('bingo-banner').classList.remove('show', 'blackout');
 }
 
-// Handle Enter in modal
+// --- Modal keyboard ---
 document.getElementById('modal-note').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') confirmNote();
   if (e.key === 'Escape') skipNote();
 });
-
-// Handle Enter in player name → shuffle
-document.getElementById('player-name').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') shuffleGrid();
-});
-
-// Init with random layout
-shuffleGrid();
 </script>
 
 </body>

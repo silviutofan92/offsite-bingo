@@ -451,12 +451,12 @@ function checkBingo() {
   if (blackout && !state.blackoutShown) {
     banner.classList.add('show', 'blackout');
     document.getElementById('bingo-title').textContent = '🏆 BLACKOUT! 🏆';
-    document.getElementById('bingo-sub').textContent = 'Full card! Screenshot this and post in Slack! 📸';
+    document.getElementById('bingo-sub').textContent = 'Full card! Screenshot your card + activity log (scroll down on mobile) and post in Slack! 📸';
     state.blackoutShown = true;
   } else if (lines.length && !state.lineBingoShown) {
     banner.classList.add('show'); banner.classList.remove('blackout');
     document.getElementById('bingo-title').textContent = 'B I N G O !';
-    document.getElementById('bingo-sub').textContent = lines.join(' + ') + '! Screenshot this and post in Slack! 📸';
+    document.getElementById('bingo-sub').textContent = lines.join(' + ') + '! Screenshot your card + activity log (scroll down on mobile) and post in Slack! 📸';
     state.lineBingoShown = true;
   }
 }

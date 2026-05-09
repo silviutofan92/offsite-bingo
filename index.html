@@ -463,6 +463,89 @@ const SQUARES = [
 let state = { playerName: '', order: [], checked: {}, log: [], lineBingoShown: false, blackoutShown: false };
 let pendingCell = null;
 
+// --- Persistence (localStorage) ---
+const STATE_KEY = 'bingo-game-state-v1';
+
+function saveState() {
+  try {
+    localStorage.setItem(STATE_KEY, JSON.stringify({
+      version: 1,
+      playerName: state.playerName,
+      checked: state.checked,
+      log: state.log,
+    }));
+  } catch (e) { /* private mode / quota — non-fatal */ }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STATE_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    if (!p || p.version !== 1) return null;
+    if (typeof p.playerName !== 'string' || !p.playerName.trim()) return null;
+    if (!p.checked || typeof p.checked !== 'object' || Array.isArray(p.checked)) return null;
+    if (!Array.isArray(p.log)) return null;
+    for (const k of Object.keys(p.checked)) {
+      const idx = parseInt(k, 10);
+      if (!Number.isInteger(idx) || idx < 0 || idx >= SQUARES.length) return null;
+      const v = p.checked[k];
+      if (!v || typeof v.time !== 'string') return null;
+    }
+    for (const e of p.log) {
+      if (!e || typeof e !== 'object' || typeof e.time !== 'string' || typeof e.action !== 'string') return null;
+    }
+    return p;
+  } catch (e) { return null; }
+}
+
+function enterGameView(name) {
+  const av = getAvatar(name);
+  document.getElementById('player-display').innerHTML =
+    '<span class="avatar" style="background:' + av.gradient + '" aria-hidden="true">' +
+    av.emojis.join('') + '</span>' +
+    '<span class="player-name-text">' + escapeHtml(name) + '</span>';
+  document.getElementById('setup-gate').style.display = 'none';
+  document.getElementById('game-wrapper').classList.add('active');
+}
+
+function tryRestoreState() {
+  const saved = loadState();
+  if (!saved) return;
+
+  state.playerName = saved.playerName;
+  state.checked = saved.checked;
+  state.log = saved.log;
+
+  // Recompute order from playerName seed (deterministic; mirrors shuffleGrid lines 555-556)
+  const rng = seededRandom(hashString(state.playerName + '-bingo-2026'));
+  state.order = shuffleArray([...Array(SQUARES.length).keys()], rng);
+
+  // Derive banner flags from current board state, not from the persisted snapshot
+  const lines = getBingoLines();
+  state.lineBingoShown = lines.length > 0;
+  state.blackoutShown = isBlackout();
+
+  enterGameView(state.playerName);
+  renderGrid(); renderLog(); updateScore();
+
+  // Re-show banner silently — no bus.emit, so no confetti/audio/vibration replay
+  if (state.blackoutShown) {
+    const banner = document.getElementById('bingo-banner');
+    banner.classList.add('show', 'blackout');
+    document.getElementById('bingo-title').textContent = '🏆 BLACKOUT! 🏆';
+    document.getElementById('bingo-sub').textContent = 'Full card! Screenshot your card + activity log (scroll down on mobile) and post in Slack! 📸';
+  } else if (state.lineBingoShown) {
+    const banner = document.getElementById('bingo-banner');
+    banner.classList.add('show');
+    banner.classList.remove('blackout');
+    document.getElementById('bingo-title').textContent = 'B I N G O !';
+    document.getElementById('bingo-sub').textContent = lines.join(' + ') + '! Screenshot your card + activity log (scroll down on mobile) and post in Slack! 📸';
+  }
+
+  startMinigame();
+}
+
 // --- Bus event emitter (covers tile:mark / tile:unmark / card:reset / bingo:line / bingo:blackout) ---
 const bus = {
   handlers: {},
@@ -488,13 +571,7 @@ function startGame() {
   const name = setupInput.value.trim();
   if (!name) return;
   state.playerName = name;
-  const av = getAvatar(name);
-  document.getElementById('player-display').innerHTML =
-    '<span class="avatar" style="background:' + av.gradient + '" aria-hidden="true">' +
-    av.emojis.join('') + '</span>' +
-    '<span class="player-name-text">' + escapeHtml(name) + '</span>';
-  document.getElementById('setup-gate').style.display = 'none';
-  document.getElementById('game-wrapper').classList.add('active');
+  enterGameView(name);
   shuffleGrid();
   startMinigame();
 }
@@ -667,8 +744,27 @@ function checkBingo() {
 
 // --- Reset ---
 function resetAll() {
-  if (!confirm('Reset your card? This clears all marks and notes.')) return;
-  shuffleGrid();
+  if (!confirm('Reset your card? This clears all marks, notes, and your name.')) return;
+
+  try { localStorage.removeItem(STATE_KEY); } catch (e) {}
+
+  state.playerName = '';
+  state.order = [];
+  state.checked = {};
+  state.log = [];
+  state.lineBingoShown = false;
+  state.blackoutShown = false;
+
+  closeModal();
+  maybeReleaseWakeLock();
+  miniState.active = false;
+  document.getElementById('minigame-strip').classList.remove('active');
+
+  document.getElementById('game-wrapper').classList.remove('active');
+  document.getElementById('setup-gate').style.display = '';
+  document.getElementById('setup-name').value = '';
+  document.getElementById('start-btn').disabled = true;
+  document.getElementById('bingo-banner').classList.remove('show', 'blackout');
 }
 
 // --- Haptics (item 2): vibrate, motion-aware ---
@@ -1050,6 +1146,11 @@ function initBusListeners() {
     if (Object.keys(state.checked).length < 15) maybeReleaseWakeLock();
   });
   bus.on('card:reset', maybeReleaseWakeLock);
+
+  // Persistence — registered last so any flag-clearing listeners run before the snapshot
+  bus.on('card:reset', saveState);
+  bus.on('tile:mark', saveState);
+  bus.on('tile:unmark', saveState);
 }
 initBusListeners();
 setupPongMobileTrigger();
@@ -1062,6 +1163,9 @@ document.getElementById('modal-note').addEventListener('keydown', (e) => {
 
 // Populate rules modal with same content as setup page rules
 document.getElementById('rules-modal-content').innerHTML = document.getElementById('rules-content').innerHTML;
+
+// Restore persisted game state (skips name gate if a saved game exists)
+tryRestoreState();
 </script>
 </body>
 </html>

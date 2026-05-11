@@ -432,6 +432,7 @@
   </div>
 </div>
 
+<script src="./team/manifest.js"></script>
 <script>
 const SQUARES = [
   { emoji: '🎖️', text: '"Volunttoled"' },
@@ -955,6 +956,37 @@ function popMole(el, id) {
 }
 
 // --- Pong easter egg (item #6) — Konami sequence + 5-tap-score-badge fallback for mobile ---
+// Eagerly preload team-member face images so the Pong ball can render them.
+let teamImagesCache = null;
+const teamImagesPromise = (async () => {
+  if (!Array.isArray(window.TEAM) || window.TEAM.length === 0) { teamImagesCache = []; return []; }
+  const results = await Promise.all(window.TEAM.map(async t => {
+    try {
+      const img = new Image();
+      img.src = `./team/${t.file}`;
+      await img.decode();
+      if (!img.naturalWidth) throw new Error('zero-size');
+      return { ...t, img, status: 'loaded' };
+    } catch {
+      return { ...t, img: null, status: 'failed' };
+    }
+  }));
+  teamImagesCache = results;
+  return results;
+})();
+function pickRandomFaceIdx(exclude) {
+  if (!teamImagesCache) return -1;
+  const loaded = [];
+  for (let i = 0; i < teamImagesCache.length; i++) {
+    if (teamImagesCache[i].status === 'loaded') loaded.push(i);
+  }
+  if (loaded.length === 0) return -1;
+  if (loaded.length === 1) return loaded[0];
+  let pick;
+  do { pick = loaded[Math.floor(Math.random() * loaded.length)]; } while (pick === exclude);
+  return pick;
+}
+
 const KONAMI_SEQ = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
 let konamiIdx = 0;
 document.addEventListener('keydown', e => {
@@ -1006,8 +1038,19 @@ function startPong() {
     bvx: 5 * (Math.random() < 0.5 ? -1 : 1),
     bvy: 3 * (Math.random() < 0.5 ? -1 : 1),
     youScore: 0, cpuScore: 0,
-    pH: 80, pW: 10, ballR: 6
+    pH: 80, pW: 10, ballR: 18,
+    faceIdx: pickRandomFaceIdx(-1),
+    spin: 0,
+    nameTtl: 0
   };
+  if (s.faceIdx >= 0 && teamImagesCache) {
+    s.nameTtl = 90;
+  } else {
+    // images may still be loading; pick lazily once available
+    teamImagesPromise.then(() => {
+      if (s.faceIdx < 0) { s.faceIdx = pickRandomFaceIdx(-1); s.nameTtl = 90; }
+    });
+  }
   function setPaddleY(clientY) {
     const rect = canvas.getBoundingClientRect();
     const relY = (clientY - rect.top) * (H / rect.height);
@@ -1019,18 +1062,20 @@ function startPong() {
 
   function tick() {
     s.bx += s.bvx; s.by += s.bvy;
+    // spin tracks rolling-ball physics: angular velocity = linear / radius
+    s.spin += (s.bvx / s.ballR) * 0.5;
     if (s.by < s.ballR || s.by > H - s.ballR) s.bvy = -s.bvy;
-    // your paddle
-    if (s.bx < s.pW + 10 + s.ballR && s.bx > 5 && s.by > s.youY && s.by < s.youY + s.pH && s.bvx < 0) {
+    // your paddle — radius-aware on both axes
+    if (s.bx < s.pW + 10 + s.ballR && s.bx > 5 && s.by + s.ballR > s.youY && s.by - s.ballR < s.youY + s.pH && s.bvx < 0) {
       s.bvx = -s.bvx * 1.04;
     }
-    // cpu paddle
-    if (s.bx > W - s.pW - 10 - s.ballR && s.bx < W - 5 && s.by > s.cpuY && s.by < s.cpuY + s.pH && s.bvx > 0) {
+    // cpu paddle — radius-aware on both axes
+    if (s.bx > W - s.pW - 10 - s.ballR && s.bx < W - 5 && s.by + s.ballR > s.cpuY && s.by - s.ballR < s.cpuY + s.pH && s.bvx > 0) {
       s.bvx = -s.bvx * 1.04;
     }
-    // score
-    if (s.bx < -10) { s.cpuScore++; resetPongBall(s, W, H); }
-    else if (s.bx > W + 10) { s.youScore++; resetPongBall(s, W, H); }
+    // score — ball must fully exit canvas
+    if (s.bx < -s.ballR) { s.cpuScore++; resetPongBall(s, W, H); }
+    else if (s.bx > W + s.ballR) { s.youScore++; resetPongBall(s, W, H); }
     // CPU AI: track ball with lag
     const cpuTarget = s.by - s.pH / 2;
     s.cpuY += Math.max(-4, Math.min(4, cpuTarget - s.cpuY));
@@ -1044,10 +1089,38 @@ function startPong() {
     ctx.fillRect(5, s.youY, s.pW, s.pH);
     ctx.fillStyle = '#E87722';
     ctx.fillRect(W - s.pW - 5, s.cpuY, s.pW, s.pH);
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.arc(s.bx, s.by, s.ballR, 0, Math.PI * 2);
-    ctx.fill();
+    // ball — team-member face when available, white circle fallback otherwise
+    const face = (s.faceIdx >= 0 && teamImagesCache) ? teamImagesCache[s.faceIdx] : null;
+    if (face && face.status === 'loaded') {
+      ctx.save();
+      ctx.translate(s.bx, s.by);
+      ctx.rotate(s.spin);
+      ctx.beginPath();
+      ctx.arc(0, 0, s.ballR, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(face.img, -s.ballR, -s.ballR, s.ballR * 2, s.ballR * 2);
+      ctx.restore();
+      ctx.beginPath();
+      ctx.arc(s.bx, s.by, s.ballR, 0, Math.PI * 2);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#fff';
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(s.bx, s.by, s.ballR, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // name caption for ~1.5s after a face swap
+    if (s.nameTtl > 0 && face && face.status === 'loaded') {
+      const alpha = Math.min(1, s.nameTtl / 30);
+      ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+      ctx.font = '600 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(face.name, W / 2, 28);
+      ctx.textAlign = 'start';
+      s.nameTtl--;
+    }
     document.getElementById('pong-you').textContent = s.youScore;
     document.getElementById('pong-cpu').textContent = s.cpuScore;
     pongRAF = requestAnimationFrame(tick);
@@ -1058,6 +1131,9 @@ function resetPongBall(s, W, H) {
   s.bx = W / 2; s.by = H / 2;
   s.bvx = 5 * (Math.random() < 0.5 ? -1 : 1);
   s.bvy = 3 * (Math.random() < 0.5 ? -1 : 1);
+  s.spin = 0;
+  const next = pickRandomFaceIdx(s.faceIdx);
+  if (next >= 0) { s.faceIdx = next; s.nameTtl = 90; }
 }
 
 // --- Wake Lock (item #7) — keep screen alive when card >60% full ---

@@ -1063,7 +1063,7 @@ function startPong() {
   function tick() {
     s.bx += s.bvx; s.by += s.bvy;
     // spin tracks rolling-ball physics: angular velocity = linear / radius
-    s.spin += (s.bvx / s.ballR) * 0.5;
+    s.spin += (s.bvx / s.ballR) * 0.2;
     if (s.by < s.ballR || s.by > H - s.ballR) s.bvy = -s.bvy;
     // your paddle — radius-aware on both axes
     if (s.bx < s.pW + 10 + s.ballR && s.bx > 5 && s.by + s.ballR > s.youY && s.by - s.ballR < s.youY + s.pH && s.bvx < 0) {
